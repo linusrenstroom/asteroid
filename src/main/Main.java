@@ -1,6 +1,8 @@
 package main;
 
 import main.gameobject.Asteroid;
+import main.gameobject.Player;
+import main.util.Point;
 
 import javax.swing.*;
 
@@ -14,6 +16,7 @@ public class Main extends JFrame {
 
         world = new GameObjectContainer();
         world.addObject(new Asteroid());
+        world.addObject(new Player(new Point(200,200)));
 
         add(world);
 

@@ -22,7 +22,7 @@ public class Asteroid extends GameObject {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
         g.drawOval((int) position.getX(), (int) position.getY(), radius, radius);
     }
 }

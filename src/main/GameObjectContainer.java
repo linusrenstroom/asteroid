@@ -38,7 +38,7 @@ public class GameObjectContainer extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics g2 = (Graphics) g;
+        Graphics2D g2 = (Graphics2D) g;
 
         for (GameObject obj : objects) {
             obj.draw(g2);

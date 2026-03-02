@@ -12,6 +12,6 @@ public abstract class GameObject {
 
     public abstract void update(double deltaTime);
 
-    public abstract void draw(Graphics g);
+    public abstract void draw(Graphics2D g);
 
 }
