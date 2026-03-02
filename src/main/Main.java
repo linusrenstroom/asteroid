@@ -1,8 +1,12 @@
 package main;
 
+import main.abstractFactory.AsteroidFactory;
+import main.abstractFactory.BulletFactory;
+import main.abstractFactory.EnemyShipFactory;
+import main.conf.GameConfig;
 import main.gameobject.Asteroid;
-import main.gameobject.Player;
-import main.util.Point;
+import main.worldStateManagement.GameObjectContainer;
+import main.worldStateManagement.SpawnManager;
 
 import javax.swing.*;
 
@@ -11,13 +15,10 @@ public class Main extends JFrame {
 
     public Main(){
         super("Asteroid");
-        setSize(400, 400);
+        setSize(GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        world = new GameObjectContainer();
-        world.addObject(new Asteroid());
-        world.addObject(new Player(new Point(200,200)));
-
+        world = new GameObjectContainer(new SpawnManager(new AsteroidFactory(),new EnemyShipFactory(),new BulletFactory()));
         add(world);
 
         setVisible(true);

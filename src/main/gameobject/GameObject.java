@@ -11,7 +11,10 @@ public abstract class GameObject {
     protected Vector2D velocity;
 
     public abstract void update(double deltaTime);
+    protected boolean dead = false;
 
+    public boolean isDead() { return dead; }
+    public void destroy() { this.dead = true; }
     public abstract void draw(Graphics2D g);
 
 }
