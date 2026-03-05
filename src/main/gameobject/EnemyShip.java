@@ -18,4 +18,9 @@ public class EnemyShip extends GameObject {
     public void draw(Graphics2D g) {
 
     }
+
+    @Override
+    public Shape getBounds() {
+        return null;
+    }
 }

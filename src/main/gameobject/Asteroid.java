@@ -5,6 +5,7 @@ import main.conf.GameConfig;
 import main.util.Point;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 
 public class Asteroid extends GameObject {
     private int radius;
@@ -34,11 +35,27 @@ public class Asteroid extends GameObject {
         }
 
     }
+    @Override
+    public void onCollision(GameObject other) {
+        if (other instanceof Bullet) {
+            this.destroy();
+        }
+    }
 
     @Override
     public void draw(Graphics2D g) {
 
         g.setColor(Color.GRAY);
         g.fillOval((int) position.getX(), (int) position.getY(), radius, radius);
+    }
+
+    @Override
+    public Shape getBounds() {
+        return new Ellipse2D.Double(
+                position.getX() - radius,
+                position.getY() - radius,
+                radius * 2,
+                radius * 2
+        );
     }
 }

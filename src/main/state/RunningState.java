@@ -1,87 +1,56 @@
 package main.state;
 
-import main.gameobject.GameObject;
 import main.gameobject.Player;
 import main.worldStateManagement.GameObjectContainer;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
-public class RunningState implements GameState{
+public class RunningState implements GameState {
+
+    private final Player player;
+    private final Map<Integer, Consumer<GameObjectContainer>> keyPressedActions = new HashMap<>();
+    private final Map<Integer, Consumer<GameObjectContainer>> keyReleasedActions = new HashMap<>();
+    private boolean isSpaceDown = false;
+
+    public RunningState(Player player) {
+        this.player = player;
+
+        keyPressedActions.put(KeyEvent.VK_W, (ctx) -> player.setMove(true));
+        keyPressedActions.put(KeyEvent.VK_A, (ctx) -> player.setRotateLeft(true));
+        keyPressedActions.put(KeyEvent.VK_D, (ctx) -> player.setRotateRight(true));
+        keyPressedActions.put(KeyEvent.VK_SPACE, (ctx) -> isSpaceDown = true);
+
+        keyReleasedActions.put(KeyEvent.VK_W, (ctx) -> player.setMove(false));
+        keyReleasedActions.put(KeyEvent.VK_A, (ctx) -> player.setRotateLeft(false));
+        keyReleasedActions.put(KeyEvent.VK_D, (ctx) -> player.setRotateRight(false));
+        keyReleasedActions.put(KeyEvent.VK_SPACE, (ctx) -> isSpaceDown = false);
+    }
+
     @Override
     public void update(double deltaTime, GameObjectContainer context) {
-
+        if (isSpaceDown) {
+            player.shoot(context);
+        }
         context.getSpawnManager().update(deltaTime, context.getObjects());
         context.updateObjects(deltaTime);
     }
 
     @Override
-    public void draw(Graphics2D g) {
-//Kanske rita ut score
-    }
-
-    @Override
     public void keyPressed(int keyCode, GameObjectContainer context) {
-        Player player = findPlayer(context);
-        if (player == null) {
-            return;
-        }
-
-        switch (keyCode) {
-            case java.awt.event.KeyEvent.VK_LEFT:
-            case java.awt.event.KeyEvent.VK_A:
-                player.setRotateLeft(true);
-                break;
-            case java.awt.event.KeyEvent.VK_RIGHT:
-            case java.awt.event.KeyEvent.VK_D:
-                player.setRotateRight(true);
-                break;
-            case java.awt.event.KeyEvent.VK_UP:
-            case java.awt.event.KeyEvent.VK_W:
-                player.setMove(true);
-                break;
-            case java.awt.event.KeyEvent.VK_SPACE:
-                player.shoot();
-                break;
-            case java.awt.event.KeyEvent.VK_DOWN:
-            case java.awt.event.KeyEvent.VK_S:
-                player.stop();
-                break;
-            default:
-                break;
-        }
+        Consumer<GameObjectContainer> action = keyPressedActions.get(keyCode);
+        if (action != null) action.accept(context);
     }
 
     @Override
     public void keyReleased(int keyCode, GameObjectContainer context) {
-        Player player = findPlayer(context);
-        if (player == null) {
-            return;
-        }
-
-        switch (keyCode) {
-            case java.awt.event.KeyEvent.VK_LEFT:
-            case java.awt.event.KeyEvent.VK_A:
-                player.setRotateLeft(false);
-                break;
-            case java.awt.event.KeyEvent.VK_RIGHT:
-            case java.awt.event.KeyEvent.VK_D:
-                player.setRotateRight(false);
-                break;
-            case java.awt.event.KeyEvent.VK_UP:
-            case java.awt.event.KeyEvent.VK_W:
-                player.setMove(false);
-                break;
-            default:
-                break;
-        }
+        Consumer<GameObjectContainer> action = keyReleasedActions.get(keyCode);
+        if (action != null) action.accept(context);
     }
 
-    private Player findPlayer(GameObjectContainer context) {
-        for (GameObject gameObject : context.getObjects()) {
-            if (gameObject instanceof Player) {
-                return (Player) gameObject;
-            }
-        }
-        return null;
-    }
+    @Override
+    public void draw(Graphics2D g) {}
 }

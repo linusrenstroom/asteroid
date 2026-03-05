@@ -3,82 +3,63 @@ package main.worldStateManagement;
 import main.gameobject.GameObject;
 import main.conf.GameConfig;
 import main.state.GameState;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameObjectContainer extends JPanel {
 
     private final List<GameObject> objects = new ArrayList<>();
+    private final List<GameObject> objectsToAdd = new ArrayList<>();
     private final SpawnManager spawnManager;
     private GameState gameState;
-    private  long lastTime;
+    private long lastTime;
 
-    public GameObjectContainer(SpawnManager spawnManager, GameState state) {
+    public GameObjectContainer(SpawnManager spawnManager, GameState initialState) {
         this.spawnManager = spawnManager;
-        this.gameState = state;
-        lastTime = System.nanoTime();
+        this.gameState = initialState;
+        this.lastTime = System.nanoTime();
         setFocusable(true);
-        setupInputBindings();
-
+        setBackground(Color.DARK_GRAY);
         Timer timer = new Timer(GameConfig.GAME_LOOP_DELAY_MS, e -> gameLoop());
         timer.start();
-
-    }
-
-    private void setupInputBindings() {
-        for (int keyCode : GameConfig.BOUND_KEYS) {
-            bindKey(keyCode);
-        }
-    }
-
-    private void bindKey(int keyCode) {
-        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = getActionMap();
-
-        String pressedActionName = "pressed_" + keyCode;
-        String releasedActionName = "released_" + keyCode;
-
-        inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, false), pressedActionName);
-        inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, true), releasedActionName);
-
-        actionMap.put(pressedActionName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gameState.keyPressed(keyCode, GameObjectContainer.this);
-            }
-        });
-
-        actionMap.put(releasedActionName, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gameState.keyReleased(keyCode, GameObjectContainer.this);
-            }
-        });
     }
 
     private void gameLoop() {
-
         long now = System.nanoTime();
         double deltaTime = (now - lastTime) / GameConfig.NANOS_PER_SECOND;
         lastTime = now;
+
         gameState.update(deltaTime, this);
+
+        updateObjects(deltaTime);
+        checkCollisions();
+
+        synchronizeObjects();
         Toolkit.getDefaultToolkit().sync();
         repaint();
     }
 
-    public SpawnManager getSpawnManager() {
-        return spawnManager;
+    private void checkCollisions() {
+        for (int i = 0; i < objects.size(); i++) {
+            GameObject a = objects.get(i);
+            for (int j = i + 1; j < objects.size(); j++) {
+                GameObject b = objects.get(j);
+                if (a.collidesWith(b)) {
+                    a.onCollision(b);
+                    b.onCollision(a);
+                    notifyObservers();
+                }
+            }
+        }
     }
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-    }
-
-    public List<GameObject> getObjects() {
-        return objects;
+    private void synchronizeObjects() {
+        if (!objectsToAdd.isEmpty()) {
+            objects.addAll(objectsToAdd);
+            objectsToAdd.clear();
+        }
+        objects.removeIf(GameObject::isDead);
     }
 
     public void updateObjects(double deltaTime) {
@@ -88,7 +69,7 @@ public class GameObjectContainer extends JPanel {
     }
 
     public void addObject(GameObject object) {
-        objects.add(object);
+        objectsToAdd.add(object);
     }
 
     @Override
@@ -99,4 +80,21 @@ public class GameObjectContainer extends JPanel {
             obj.draw(g2);
         }
     }
+
+    public List<GameObject> getObjects() {
+        return objects;
+    }
+
+    public SpawnManager getSpawnManager() {
+        return spawnManager;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
 }

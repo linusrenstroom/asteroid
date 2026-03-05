@@ -12,7 +12,7 @@ public class GameConfig {
 
     public static final double PLAYER_START_X_RATIO = 0.5;
     public static final double PLAYER_START_Y_RATIO = 0.5;
-
+    public static final double PLAYER_SHOOT_COOLDOWN = 0.5;
     public static final double PLAYER_ROTATION_SPEED = 3.5;
     public static final double PLAYER_ACCELERATION = 200.0;
     public static final double PLAYER_DRAG_PER_SECOND = 0.35;
@@ -24,7 +24,7 @@ public class GameConfig {
 
     public static final int BULLET_RADIUS = 3;
 
-    public static final int ASTEROID_DEFAULT_RADIUS = 20;
+    public static final int ASTEROID_DEFAULT_RADIUS = 40;
     public static final double ASTEROID_DEFAULT_START_X = 0.0;
     public static final double ASTEROID_DEFAULT_START_Y = 0.0;
     public static final double ASTEROID_DEFAULT_VELOCITY_X = 10.0;

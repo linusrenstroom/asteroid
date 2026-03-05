@@ -15,7 +15,6 @@ public class SpawnManager {
     private final SpawnStrategy[] strategies;
     private SpawnStrategy spawnStrategy;
     private final Random random = new Random();
-
     private double gameTime = 0;
     private double nextSpawnTime = 0;
 
@@ -34,11 +33,9 @@ public class SpawnManager {
     public void update(double deltaTime, List<GameObject> objects) {
         gameTime += deltaTime;
         nextSpawnTime += deltaTime;
-
         if (nextSpawnTime >= GameConfig.BASE_SPAWN_RATE_SECONDS) {
             nextSpawnTime = 0;
             spawnStrategy = strategies[random.nextInt(strategies.length)];
-
             spawnStrategy.spawn(objects, gameTime);
         }
     }

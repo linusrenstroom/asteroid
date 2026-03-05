@@ -3,97 +3,120 @@ package main.gameobject;
 import main.Vector2D;
 import main.conf.GameConfig;
 import main.util.Point;
+import main.worldStateManagement.GameObjectContainer;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.geom.AffineTransform;
 
-public class Player extends GameObject{
+public class Player extends GameObject {
+    private final Polygon shipBoundingBox;
+    private final double rotationSpeed = GameConfig.PLAYER_ROTATION_SPEED;
+    private final double acceleration = GameConfig.PLAYER_ACCELERATION;
+    private final double dragPerSecond = GameConfig.PLAYER_DRAG_PER_SECOND;
+    private final double headingOffset = GameConfig.PLAYER_HEADING_OFFSET_RADIANS;
+    private final double bulletSpeed = GameConfig.PLAYER_BULLET_SPEED;
+    private final double maxShootCooldown = GameConfig.PLAYER_SHOOT_COOLDOWN;
+
+    private final int[] shipXPoints = GameConfig.PLAYER_SHIP_X_POINTS;
+    private final int[] shipYPoints = GameConfig.PLAYER_SHIP_Y_POINTS;
+    private final int shipPointCount = GameConfig.PLAYER_SHIP_POINT_COUNT;
+
     private double angle;
-    private List<Bullet> bullets;
     private boolean move;
     private boolean rotateLeft;
     private boolean rotateRight;
+    private double currentShootCooldown = 0;
 
-    public Player(Point startPosition){
+    public Player(Point startPosition) {
         this.position = new Point(startPosition.getX(), startPosition.getY());
-        this.velocity = new Vector2D(0,0);
+        this.velocity = new Vector2D(0, 0);
+        this.shipBoundingBox = new Polygon(shipXPoints, shipYPoints, shipPointCount);
         this.angle = 0;
-        this.bullets = new ArrayList<>();
     }
 
     @Override
     public void update(double deltaTime) {
         int rotationInput = (rotateRight ? 1 : 0) - (rotateLeft ? 1 : 0);
-        angle += rotationInput * GameConfig.PLAYER_ROTATION_SPEED * deltaTime;
-        double heading = angle - GameConfig.PLAYER_HEADING_OFFSET_RADIANS;
+        angle += rotationInput * rotationSpeed * deltaTime;
+
+        double heading = angle - headingOffset;
 
         if (move) {
             velocity = velocity.add(new Vector2D(
-                    Math.cos(heading) * GameConfig.PLAYER_ACCELERATION * deltaTime,
-                    Math.sin(heading) * GameConfig.PLAYER_ACCELERATION * deltaTime
+                    Math.cos(heading) * acceleration * deltaTime,
+                    Math.sin(heading) * acceleration * deltaTime
             ));
         }
 
-        velocity = velocity.multiply(Math.pow(GameConfig.PLAYER_DRAG_PER_SECOND, deltaTime));
+        if (currentShootCooldown > 0) {
+            currentShootCooldown -= deltaTime;
+        }
+
+        velocity = velocity.multiply(Math.pow(dragPerSecond, deltaTime));
 
         position.setX(position.getX() + velocity.x * deltaTime);
         position.setY(position.getY() + velocity.y * deltaTime);
 
-        for (Bullet b : bullets) {
-            b.update(deltaTime);
-        }
-
+        moveOutsideScreenX();
+        moveOutsideScreenY();
     }
 
     @Override
     public void draw(Graphics2D g) {
-        Polygon ship = new Polygon(
-                GameConfig.PLAYER_SHIP_X_POINTS,
-                GameConfig.PLAYER_SHIP_Y_POINTS,
-                GameConfig.PLAYER_SHIP_POINT_COUNT
-        );
-
-        g.translate((int)position.getX(), (int)position.getY());
+        g.translate((int) position.getX(), (int) position.getY());
         g.rotate(angle);
-
-        g.draw(ship);
-
-        // Reset transform so bullets and other objects are drawn correctly
+        g.setColor(Color.WHITE);
+        g.fill(shipBoundingBox);
+        g.draw(shipBoundingBox);
         g.rotate(-angle);
         g.translate(-position.getX(), -position.getY());
+    }
+    @Override
+    public Shape getBounds() {
+        AffineTransform at = new AffineTransform();
+        at.translate(position.getX(), position.getY());
+        at.rotate(angle);
+        return at.createTransformedShape(shipBoundingBox);
+    }
 
-        for (Bullet b : bullets) {
-            b.draw(g);
+    public void shoot(GameObjectContainer world) {
+        if (currentShootCooldown <= 0) {
+            double heading = angle - headingOffset;
+            Vector2D bulletVel = new Vector2D(
+                    Math.cos(heading) * bulletSpeed,
+                    Math.sin(heading) * bulletSpeed
+            );
+
+            world.addObject(new Bullet(new Point(position.getX(), position.getY()), bulletVel));
+            currentShootCooldown = maxShootCooldown;
         }
     }
 
-    public void setMove(boolean on){
-        move = on;
-    }
-
-    public void setRotateLeft(boolean on) {
-        rotateLeft = on;
-    }
-
-    public void setRotateRight(boolean on) {
-        rotateRight = on;
-    }
-
-    public void rotate(double deltaAngle){
-        angle += deltaAngle;
-    }
-
-    public void shoot() {
-        double heading = angle - GameConfig.PLAYER_HEADING_OFFSET_RADIANS;
-        Vector2D bulletVel = new Vector2D(
-                Math.cos(heading) * GameConfig.PLAYER_BULLET_SPEED,
-                Math.sin(heading) * GameConfig.PLAYER_BULLET_SPEED
-        );
-        bullets.add(new Bullet(position, bulletVel));
-    }
+    public void setMove(boolean on) { move = on; }
+    public void setRotateLeft(boolean on) { rotateLeft = on; }
+    public void setRotateRight(boolean on) { rotateRight = on; }
 
     public void stop() {
         velocity = new Vector2D(0, 0);
+    }
+
+    private void moveOutsideScreenX() {
+        if (position.getX() < 0) {
+            position.setX(GameConfig.SCREEN_WIDTH);
+        } else if (position.getX() > GameConfig.SCREEN_WIDTH) {
+            position.setX(0);
+        }
+    }
+
+    private void moveOutsideScreenY() {
+        if (position.getY() < 0) {
+            position.setY(GameConfig.SCREEN_HEIGHT);
+        } else if (position.getY() > GameConfig.SCREEN_HEIGHT) {
+            position.setY(0);
+        }
+    }
+    @Override
+    public void onCollision(GameObject other) {
+
     }
 }
