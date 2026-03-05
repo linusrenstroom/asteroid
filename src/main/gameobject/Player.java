@@ -2,78 +2,81 @@ package main.gameobject;
 
 import main.Vector2D;
 import main.util.Point;
+import main.worldStateManagement.GameObjectContainer;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.geom.AffineTransform;
 
-public class Player extends GameObject{
+public class Player extends GameObject {
+
     private double angle;
-    private List<Bullet> bullets;
-    private boolean move;
+    private Vector2D velocity;
+    private final GameObjectContainer world;
 
-    public Player(Point startPosition){
+    public Player(Point startPosition, GameObjectContainer world){
         this.position = new Point(startPosition.getX(), startPosition.getY());
         this.velocity = new Vector2D(0,0);
         this.angle = 0;
-        this.bullets = new ArrayList<>();
+        this.world = world;
     }
 
     @Override
     public void update(double deltaTime) {
-
-        if (move) {
-            double acceleration = 200;
-            velocity = velocity.add(new Vector2D(
-                    Math.cos(angle) * acceleration * deltaTime,
-                    Math.sin(angle) * acceleration * deltaTime
-            ));
-        }
-
         position.setX(position.getX() + velocity.x * deltaTime);
         position.setY(position.getY() + velocity.y * deltaTime);
-
-        for (Bullet b : bullets) {
-            b.update(deltaTime);
-        }
-
     }
 
     @Override
     public void draw(Graphics2D g) {
-        int[] xPoints = {0, -10, 10}; // tip, left, right
-        int[] yPoints = {-15, 10, 10}; // tip is above, base below
+        int shipWidth = 20;
+        int shipHeight = 25;
 
+        int[] xPoints = {0, -shipWidth / 2, shipWidth / 2};   // tip, left, right
+        int[] yPoints = {-shipHeight / 2, shipHeight / 2, shipHeight / 2}; // tip above, base below
         Polygon ship = new Polygon(xPoints, yPoints, 3);
 
-        g.translate((int)position.getX(), (int)position.getY());
-        g.rotate(angle);
+        // Save the original transform
+        AffineTransform old = g.getTransform();
 
+        // Translate & rotate only for the ship
+        g.translate(position.getX(), position.getY());
+        g.rotate(angle - Math.PI/2);
         g.draw(ship);
 
-        // Reset transform so bullets and other objects are drawn correctly
-        g.rotate(-angle);
-        g.translate(-position.getX(), -position.getY());
-
-        for (Bullet b : bullets) {
-            b.draw(g);
-        }
+        // Restore the original transform so the world stays put
+        g.setTransform(old);
     }
 
-    public void setMove(boolean on){
-        move = on;
+    public void accelerate(double deltaTime) {
+        double acceleration = 200;
+        velocity = velocity.add(new Vector2D(
+                Math.cos(angle) * acceleration * deltaTime,
+                Math.sin(angle) * acceleration * deltaTime
+        ));
     }
 
-    public void rotate(double deltaAngle){
+    public void rotate(double deltaAngle) {
         angle += deltaAngle;
     }
 
     public void shoot() {
         double bulletSpeed = 300;
+
+        // Ship tip offset relative to the ship's center
+        double tipOffset = -12.5; // shipHeight / 2, matches your triangle tip
+        double tipX = position.getX() + Math.cos(angle) * tipOffset;
+        double tipY = position.getY() + Math.sin(angle) * tipOffset;
+
         Vector2D bulletVel = new Vector2D(
                 Math.cos(angle) * bulletSpeed,
                 Math.sin(angle) * bulletSpeed
         );
-        bullets.add(new Bullet(position, bulletVel));
+
+        world.addObject(new Bullet(tipX, tipY, bulletVel));
+    }
+
+    public void stopAcceleration() {
+        // you could gradually reduce velocity or just set it to zero if needed
+        velocity = new Vector2D(0,0);
     }
 }

@@ -1,10 +1,9 @@
 package main;
 
-import main.abstractFactory.*;
+import main.abstractFactory.AsteroidFactory;
 import main.conf.GameConfig;
 import main.gameobject.Player;
 import main.state.RunningState;
-import main.strategy.LeftSideSpawnStrategy;
 import main.util.Point;
 import main.worldStateManagement.GameObjectContainer;
 import main.worldStateManagement.SpawnManager;
@@ -22,19 +21,18 @@ public class Main extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         SpawnManager spawnManager = new SpawnManager(new AsteroidFactory());
+        world = new GameObjectContainer(spawnManager, null);
 
-        world = new GameObjectContainer(spawnManager, new RunningState());
+        Player player = new Player(
+                new Point(GameConfig.SCREEN_WIDTH / 2, GameConfig.SCREEN_HEIGHT / 2),
+                world
+        );
 
-        world.setPreferredSize(new Dimension(
-                GameConfig.SCREEN_WIDTH,
-                GameConfig.SCREEN_HEIGHT
-        ));
+        RunningState runningState = new RunningState(player, 0.016);
+        world.setGameState(runningState);
+        world.addObject(player);
 
-        world.addObject(new Player(
-                new Point(GameConfig.SCREEN_WIDTH / 2,
-                        GameConfig.SCREEN_HEIGHT / 2)
-        ));
-
+        world.setPreferredSize(new Dimension(GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT));
         add(world);
         pack();
         setLocationRelativeTo(null);

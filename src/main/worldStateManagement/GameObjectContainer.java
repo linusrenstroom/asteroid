@@ -6,6 +6,8 @@ import main.state.RunningState;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +22,19 @@ public class GameObjectContainer extends JPanel {
         this.spawnManager = spawnManager;
         this.gameState = state;
         lastTime = System.nanoTime();
+        setFocusable(true);
 
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (gameState != null) gameState.keyPressed(e);
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (gameState != null) gameState.keyReleased(e);
+            }
+        });
         Timer timer = new Timer(16, e -> gameLoop());
         timer.start();
 
