@@ -1,12 +1,13 @@
 package main.gameobject;
 
 import main.Vector2D;
+import main.conf.GameConfig;
 import main.util.Point;
 
 import java.awt.*;
 
 public class Bullet extends GameObject{
-    private final int radius = 2;
+    private final int radius = GameConfig.BULLET_RADIUS;
 
     public Bullet(Point startPos, Vector2D velocity){
         this.position = new Point(startPos.getX(), startPos.getY());
@@ -23,6 +24,7 @@ public class Bullet extends GameObject{
     @Override
     public void draw(Graphics2D g) {
         g.drawLine((int)position.getX(), (int)position.getY(),
-                (int)position.getX() +1, (int)position.getY() +1);
+                (int)position.getX() + radius,
+                (int)position.getY() + radius);
     }
 }

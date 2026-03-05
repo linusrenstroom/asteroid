@@ -21,13 +21,16 @@ public class LeftSideSpawnStrategy implements SpawnStrategy {
 
     @Override
     public void spawn(List<GameObject> objects, double gameTime) {
-        double spawnX = -50;
+        double spawnX = -GameConfig.SPAWN_OFFSCREEN_MARGIN;
         double spawnY = random.nextDouble() * GameConfig.SCREEN_HEIGHT;
 
-        double targetX = GameConfig.SCREEN_WIDTH / 2.0 + (random.nextDouble() * GameConfig.SCREEN_WIDTH / 4.0);
-        double targetY = GameConfig.SCREEN_HEIGHT / 4.0 + (random.nextDouble() * GameConfig.SCREEN_HEIGHT / 2.0);
+        double targetX = GameConfig.SCREEN_WIDTH * GameConfig.SPAWN_TARGET_X_OFFSET_FACTOR
+                + (random.nextDouble() * GameConfig.SCREEN_WIDTH * GameConfig.SPAWN_TARGET_X_RANGE_FACTOR);
+        double targetY = GameConfig.SCREEN_HEIGHT * GameConfig.SPAWN_TARGET_Y_BASE_FACTOR
+                + (random.nextDouble() * GameConfig.SCREEN_HEIGHT * GameConfig.SPAWN_TARGET_Y_RANGE_FACTOR);
 
-        double speed = 100 + gameTime * 2;
+        double speed = GameConfig.SPAWN_ASTEROID_BASE_SPEED
+                + gameTime * GameConfig.SPAWN_ASTEROID_SPEED_INCREASE_PER_SECOND;
 
         double deltaX = targetX - spawnX;
         double deltaY = targetY - spawnY;

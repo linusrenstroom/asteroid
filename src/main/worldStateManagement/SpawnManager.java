@@ -1,6 +1,7 @@
 package main.worldStateManagement;
 
 import main.abstractFactory.GameObjectFactory;
+import main.conf.GameConfig;
 import main.gameobject.GameObject;
 import main.strategy.LeftSideSpawnStrategy;
 import main.strategy.RightSideSpawnStrategy;
@@ -17,7 +18,6 @@ public class SpawnManager {
 
     private double gameTime = 0;
     private double nextSpawnTime = 0;
-    private final double BASE_SPAWN_RATE = 1.0;
 
     public SpawnManager(GameObjectFactory factory) {
         spawnStrategy = new LeftSideSpawnStrategy(factory);
@@ -35,7 +35,7 @@ public class SpawnManager {
         gameTime += deltaTime;
         nextSpawnTime += deltaTime;
 
-        if (nextSpawnTime >= BASE_SPAWN_RATE) {
+        if (nextSpawnTime >= GameConfig.BASE_SPAWN_RATE_SECONDS) {
             nextSpawnTime = 0;
             spawnStrategy = strategies[random.nextInt(strategies.length)];
 

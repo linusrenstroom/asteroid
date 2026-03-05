@@ -1,6 +1,7 @@
 package main.gameobject;
 
 import main.Vector2D;
+import main.conf.GameConfig;
 import main.util.Point;
 
 import java.awt.*;
@@ -11,6 +12,8 @@ public class Player extends GameObject{
     private double angle;
     private List<Bullet> bullets;
     private boolean move;
+    private boolean rotateLeft;
+    private boolean rotateRight;
 
     public Player(Point startPosition){
         this.position = new Point(startPosition.getX(), startPosition.getY());
@@ -21,14 +24,18 @@ public class Player extends GameObject{
 
     @Override
     public void update(double deltaTime) {
+        int rotationInput = (rotateRight ? 1 : 0) - (rotateLeft ? 1 : 0);
+        angle += rotationInput * GameConfig.PLAYER_ROTATION_SPEED * deltaTime;
+        double heading = angle - GameConfig.PLAYER_HEADING_OFFSET_RADIANS;
 
         if (move) {
-            double acceleration = 200;
             velocity = velocity.add(new Vector2D(
-                    Math.cos(angle) * acceleration * deltaTime,
-                    Math.sin(angle) * acceleration * deltaTime
+                    Math.cos(heading) * GameConfig.PLAYER_ACCELERATION * deltaTime,
+                    Math.sin(heading) * GameConfig.PLAYER_ACCELERATION * deltaTime
             ));
         }
+
+        velocity = velocity.multiply(Math.pow(GameConfig.PLAYER_DRAG_PER_SECOND, deltaTime));
 
         position.setX(position.getX() + velocity.x * deltaTime);
         position.setY(position.getY() + velocity.y * deltaTime);
@@ -41,10 +48,11 @@ public class Player extends GameObject{
 
     @Override
     public void draw(Graphics2D g) {
-        int[] xPoints = {0, -10, 10}; // tip, left, right
-        int[] yPoints = {-15, 10, 10}; // tip is above, base below
-
-        Polygon ship = new Polygon(xPoints, yPoints, 3);
+        Polygon ship = new Polygon(
+                GameConfig.PLAYER_SHIP_X_POINTS,
+                GameConfig.PLAYER_SHIP_Y_POINTS,
+                GameConfig.PLAYER_SHIP_POINT_COUNT
+        );
 
         g.translate((int)position.getX(), (int)position.getY());
         g.rotate(angle);
@@ -64,16 +72,28 @@ public class Player extends GameObject{
         move = on;
     }
 
+    public void setRotateLeft(boolean on) {
+        rotateLeft = on;
+    }
+
+    public void setRotateRight(boolean on) {
+        rotateRight = on;
+    }
+
     public void rotate(double deltaAngle){
         angle += deltaAngle;
     }
 
     public void shoot() {
-        double bulletSpeed = 300;
+        double heading = angle - GameConfig.PLAYER_HEADING_OFFSET_RADIANS;
         Vector2D bulletVel = new Vector2D(
-                Math.cos(angle) * bulletSpeed,
-                Math.sin(angle) * bulletSpeed
+                Math.cos(heading) * GameConfig.PLAYER_BULLET_SPEED,
+                Math.sin(heading) * GameConfig.PLAYER_BULLET_SPEED
         );
         bullets.add(new Bullet(position, bulletVel));
+    }
+
+    public void stop() {
+        velocity = new Vector2D(0, 0);
     }
 }

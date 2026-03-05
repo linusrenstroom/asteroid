@@ -3,7 +3,6 @@ package main.state;
 import main.worldStateManagement.GameObjectContainer;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 public class MenuState implements GameState{
     @Override
@@ -17,12 +16,12 @@ public class MenuState implements GameState{
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(int keyCode, GameObjectContainer context) {
 
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(int keyCode, GameObjectContainer context) {
 
     }
 }

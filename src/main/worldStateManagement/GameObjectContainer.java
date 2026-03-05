@@ -1,11 +1,12 @@
 package main.worldStateManagement;
 
 import main.gameobject.GameObject;
+import main.conf.GameConfig;
 import main.state.GameState;
-import main.state.RunningState;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +21,49 @@ public class GameObjectContainer extends JPanel {
         this.spawnManager = spawnManager;
         this.gameState = state;
         lastTime = System.nanoTime();
+        setFocusable(true);
+        setupInputBindings();
 
-        Timer timer = new Timer(16, e -> gameLoop());
+        Timer timer = new Timer(GameConfig.GAME_LOOP_DELAY_MS, e -> gameLoop());
         timer.start();
 
+    }
+
+    private void setupInputBindings() {
+        for (int keyCode : GameConfig.BOUND_KEYS) {
+            bindKey(keyCode);
+        }
+    }
+
+    private void bindKey(int keyCode) {
+        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        String pressedActionName = "pressed_" + keyCode;
+        String releasedActionName = "released_" + keyCode;
+
+        inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, false), pressedActionName);
+        inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, true), releasedActionName);
+
+        actionMap.put(pressedActionName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameState.keyPressed(keyCode, GameObjectContainer.this);
+            }
+        });
+
+        actionMap.put(releasedActionName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameState.keyReleased(keyCode, GameObjectContainer.this);
+            }
+        });
     }
 
     private void gameLoop() {
 
         long now = System.nanoTime();
-        double deltaTime = (now - lastTime) / 1_000_000_000.0;
+        double deltaTime = (now - lastTime) / GameConfig.NANOS_PER_SECOND;
         lastTime = now;
         gameState.update(deltaTime, this);
         Toolkit.getDefaultToolkit().sync();

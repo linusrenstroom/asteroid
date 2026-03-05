@@ -4,7 +4,6 @@ import main.abstractFactory.*;
 import main.conf.GameConfig;
 import main.gameobject.Player;
 import main.state.RunningState;
-import main.strategy.LeftSideSpawnStrategy;
 import main.util.Point;
 import main.worldStateManagement.GameObjectContainer;
 import main.worldStateManagement.SpawnManager;
@@ -17,7 +16,7 @@ public class Main extends JFrame {
     private GameObjectContainer world;
 
     public Main() {
-        super("Asteroid");
+        super(GameConfig.WINDOW_TITLE);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -31,8 +30,10 @@ public class Main extends JFrame {
         ));
 
         world.addObject(new Player(
-                new Point(GameConfig.SCREEN_WIDTH / 2,
-                        GameConfig.SCREEN_HEIGHT / 2)
+                new Point(
+                        GameConfig.SCREEN_WIDTH * GameConfig.PLAYER_START_X_RATIO,
+                        GameConfig.SCREEN_HEIGHT * GameConfig.PLAYER_START_Y_RATIO
+                )
         ));
 
         add(world);

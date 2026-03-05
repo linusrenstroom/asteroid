@@ -4,7 +4,6 @@ import main.conf.GameConfig;
 import main.worldStateManagement.GameObjectContainer;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 public class PausedState implements GameState{
     @Override
@@ -14,19 +13,19 @@ public class PausedState implements GameState{
 
     @Override
     public void draw(Graphics2D g) {
-        g.setColor(new Color(0,0,0,128));
+        g.setColor(new Color(0, 0, 0, GameConfig.PAUSED_OVERLAY_ALPHA));
         g.fillRect(0,0, GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT);
         g.setColor(Color.WHITE);
-        g.drawString("PAUSAT", GameConfig.SCREEN_WIDTH/2, GameConfig.SCREEN_HEIGHT/2);
+        g.drawString(GameConfig.PAUSED_TEXT, GameConfig.SCREEN_WIDTH / 2, GameConfig.SCREEN_HEIGHT / 2);
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(int keyCode, GameObjectContainer context) {
 
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(int keyCode, GameObjectContainer context) {
 
     }
 }

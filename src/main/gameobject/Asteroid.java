@@ -5,15 +5,14 @@ import main.conf.GameConfig;
 import main.util.Point;
 
 import java.awt.*;
-import java.util.Timer;
 
 public class Asteroid extends GameObject {
     private int radius;
 
     public Asteroid() {
-        this.radius = 20;
-        this.position = new Point(0,0);
-        this.velocity = new Vector2D(10,0);
+        this.radius = GameConfig.ASTEROID_DEFAULT_RADIUS;
+        this.position = new Point(GameConfig.ASTEROID_DEFAULT_START_X, GameConfig.ASTEROID_DEFAULT_START_Y);
+        this.velocity = new Vector2D(GameConfig.ASTEROID_DEFAULT_VELOCITY_X, GameConfig.ASTEROID_DEFAULT_VELOCITY_Y);
     }
 
     public Asteroid(int radius, double posX, double posY, double velX, double velY) {
@@ -27,11 +26,10 @@ public class Asteroid extends GameObject {
        position.setX(position.getX()+ deltaTime* velocity.x);
        position.setY(position.getY()+ deltaTime* velocity.y);
 
-       // Plus minus 100 för att asteroiden inte ska försvinna innan hela är utanför :D
-        if (position.getX() < -100 ||
-                position.getX() > GameConfig.SCREEN_WIDTH + 100 ||
-                position.getY() < -100 ||
-                position.getY() > GameConfig.SCREEN_HEIGHT + 100) {
+        if (position.getX() < -GameConfig.ASTEROID_DESPAWN_MARGIN ||
+                position.getX() > GameConfig.SCREEN_WIDTH + GameConfig.ASTEROID_DESPAWN_MARGIN ||
+                position.getY() < -GameConfig.ASTEROID_DESPAWN_MARGIN ||
+                position.getY() > GameConfig.SCREEN_HEIGHT + GameConfig.ASTEROID_DESPAWN_MARGIN) {
             this.destroy();
         }
 
