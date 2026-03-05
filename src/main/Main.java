@@ -3,6 +3,8 @@ package main;
 import main.abstractFactory.*;
 import main.conf.GameConfig;
 import main.gameobject.Player;
+import main.state.GameOverState;
+import main.state.PausedState;
 import main.state.RunningState;
 import main.util.Point;
 import main.worldStateManagement.GameObjectContainer;
@@ -14,7 +16,9 @@ import java.awt.*;
 public class Main extends JFrame {
 
     private GameObjectContainer world;
-    private InputHandler inputHandler;
+    private RunningState runningState;
+    private PausedState pausedState;
+    private GameOverState gameOverState;
 
     public Main() {
         super(GameConfig.WINDOW_TITLE);
@@ -25,13 +29,15 @@ public class Main extends JFrame {
                 GameConfig.SCREEN_HEIGHT * GameConfig.PLAYER_START_Y_RATIO
         ));
 
-        RunningState runningState = new RunningState(player);
-        SpawnManager spawnManager = new SpawnManager(new AsteroidFactory());
+        runningState = new RunningState(player);
+        pausedState = new PausedState(runningState);
+        gameOverState = new GameOverState();
 
+        SpawnManager spawnManager = new SpawnManager(new AsteroidFactory());
         world = new GameObjectContainer(spawnManager, runningState);
         world.addObject(player);
 
-        inputHandler = new InputHandler(world, runningState, world);
+        new InputHandler(world);
 
         world.setPreferredSize(new Dimension(
                 GameConfig.SCREEN_WIDTH,
@@ -43,6 +49,10 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
+
+    public RunningState getRunningState() { return runningState; }
+    public PausedState getPausedState() { return pausedState; }
+    public GameOverState getGameOverState() { return gameOverState; }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Main::new);

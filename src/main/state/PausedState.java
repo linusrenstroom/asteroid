@@ -4,8 +4,13 @@ import main.conf.GameConfig;
 import main.worldStateManagement.GameObjectContainer;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class PausedState implements GameState{
+    private GameState previousState;
+    public PausedState(GameState previousState) {
+        this.previousState = previousState;
+    }
     @Override
     public void update(double deltaTime, GameObjectContainer context) {
 
@@ -21,7 +26,10 @@ public class PausedState implements GameState{
 
     @Override
     public void keyPressed(int keyCode, GameObjectContainer context) {
-
+        if (keyCode == KeyEvent.VK_P || keyCode == KeyEvent.VK_ESCAPE) {
+            context.setGameState(previousState);
+            System.out.println("PAUSED");
+        }
     }
 
     @Override

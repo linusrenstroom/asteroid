@@ -17,6 +17,7 @@ public class MenuState implements GameState{
 
     @Override
     public void keyPressed(int keyCode, GameObjectContainer context) {
+        context.setGameState(new RunningState());
 
     }
 

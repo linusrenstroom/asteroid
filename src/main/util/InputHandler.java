@@ -1,35 +1,34 @@
 package main.util;
 
-import main.conf.GameConfig;
-import main.state.GameState;
 import main.worldStateManagement.GameObjectContainer;
+import main.state.GameState;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class InputHandler {
 
-    private GameState gameState;
     private final GameObjectContainer world;
 
-    public InputHandler(JComponent component, GameState gameState, GameObjectContainer world) {
-        this.gameState = gameState;
+    public InputHandler(GameObjectContainer world) {
         this.world = world;
-
-        setupKeyBindings(component);
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
+        setupKeyBindings(world);
     }
 
     private void setupKeyBindings(JComponent component) {
-
         InputMap inputMap = component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = component.getActionMap();
+        int[] keys = {
+                java.awt.event.KeyEvent.VK_W,
+                java.awt.event.KeyEvent.VK_A,
+                java.awt.event.KeyEvent.VK_S,
+                java.awt.event.KeyEvent.VK_D,
+                java.awt.event.KeyEvent.VK_SPACE,
+                java.awt.event.KeyEvent.VK_P,
+                java.awt.event.KeyEvent.VK_ESCAPE
+        };
 
-        for (int keyCode : GameConfig.BOUND_KEYS) {
-
+        for (int keyCode : keys) {
             String pressed = "pressed_" + keyCode;
             String released = "released_" + keyCode;
 
@@ -39,14 +38,16 @@ public class InputHandler {
             actionMap.put(pressed, new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    gameState.keyPressed(keyCode, world);
+                    GameState current = world.getGameState();
+                    if (current != null) current.keyPressed(keyCode, world);
                 }
             });
 
             actionMap.put(released, new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    gameState.keyReleased(keyCode, world);
+                    GameState current = world.getGameState();
+                    if (current != null) current.keyReleased(keyCode, world);
                 }
             });
         }

@@ -2,16 +2,16 @@ package main.worldStateManagement;
 
 import main.gameobject.GameObject;
 import main.conf.GameConfig;
+import main.gameobject.Player;
 import main.state.GameState;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameObjectContainer extends JPanel {
-
     private final List<GameObject> objects = new ArrayList<>();
-    private final List<GameObject> objectsToAdd = new ArrayList<>();
     private final SpawnManager spawnManager;
     private GameState gameState;
     private long lastTime;
@@ -22,6 +22,7 @@ public class GameObjectContainer extends JPanel {
         this.lastTime = System.nanoTime();
         setFocusable(true);
         setBackground(Color.DARK_GRAY);
+
         Timer timer = new Timer(GameConfig.GAME_LOOP_DELAY_MS, e -> gameLoop());
         timer.start();
     }
@@ -33,32 +34,28 @@ public class GameObjectContainer extends JPanel {
 
         gameState.update(deltaTime, this);
 
-        updateObjects(deltaTime);
-        checkCollisions();
 
-        synchronizeObjects();
+
+        removeDeadObjects();
         Toolkit.getDefaultToolkit().sync();
         repaint();
     }
 
-    private void checkCollisions() {
-        for (int i = 0; i < objects.size(); i++) {
+    public void checkCollisions() {
+        int size = objects.size();
+        for (int i = 0; i < size; i++) {
             GameObject a = objects.get(i);
-            for (int j = i + 1; j < objects.size(); j++) {
+            for (int j = i + 1; j < size; j++) {
                 GameObject b = objects.get(j);
                 if (a.collidesWith(b)) {
                     a.onCollision(b);
                     b.onCollision(a);
-                    notifyObservers();
                 }
             }
         }
     }
-    private void synchronizeObjects() {
-        if (!objectsToAdd.isEmpty()) {
-            objects.addAll(objectsToAdd);
-            objectsToAdd.clear();
-        }
+
+    private void removeDeadObjects() {
         objects.removeIf(GameObject::isDead);
     }
 
@@ -69,16 +66,18 @@ public class GameObjectContainer extends JPanel {
     }
 
     public void addObject(GameObject object) {
-        objectsToAdd.add(object);
+        objects.add(object);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for (GameObject obj : objects) {
             obj.draw(g2);
         }
+        gameState.draw(g2);
     }
 
     public List<GameObject> getObjects() {
@@ -96,5 +95,4 @@ public class GameObjectContainer extends JPanel {
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
-
 }

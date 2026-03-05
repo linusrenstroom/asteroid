@@ -23,18 +23,23 @@ public class RunningState implements GameState {
         keyPressedActions.put(KeyEvent.VK_A, (ctx) -> player.setRotateLeft(true));
         keyPressedActions.put(KeyEvent.VK_D, (ctx) -> player.setRotateRight(true));
         keyPressedActions.put(KeyEvent.VK_SPACE, (ctx) -> isSpaceDown = true);
-
         keyReleasedActions.put(KeyEvent.VK_W, (ctx) -> player.setMove(false));
         keyReleasedActions.put(KeyEvent.VK_A, (ctx) -> player.setRotateLeft(false));
         keyReleasedActions.put(KeyEvent.VK_D, (ctx) -> player.setRotateRight(false));
         keyReleasedActions.put(KeyEvent.VK_SPACE, (ctx) -> isSpaceDown = false);
+        keyPressedActions.put(KeyEvent.VK_P, (ctx) -> ctx.setGameState(new PausedState(this)));
+        keyPressedActions.put(KeyEvent.VK_ESCAPE, (ctx) -> ctx.setGameState(new PausedState(this)));
     }
-
+    //TODO Se över hela rörelse mekaniken.
+    //TODO GameState borde inte kontrollera player.shoot.
+    //TODO RunningState bör inte behöva en referens till player
     @Override
     public void update(double deltaTime, GameObjectContainer context) {
         if (isSpaceDown) {
             player.shoot(context);
         }
+        context.updateObjects(deltaTime);
+        context.checkCollisions();
         context.getSpawnManager().update(deltaTime, context.getObjects());
         context.updateObjects(deltaTime);
     }
@@ -43,6 +48,7 @@ public class RunningState implements GameState {
     public void keyPressed(int keyCode, GameObjectContainer context) {
         Consumer<GameObjectContainer> action = keyPressedActions.get(keyCode);
         if (action != null) action.accept(context);
+
     }
 
     @Override
