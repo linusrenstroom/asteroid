@@ -1,55 +1,38 @@
 package main.util;
 
-import main.worldStateManagement.GameObjectContainer;
-import main.state.GameState;
+import main.command.Command;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.HashMap;
+import java.util.Map;
 
-public class InputHandler {
+public class InputHandler implements KeyListener {
 
-    private final GameObjectContainer world;
+    private Map<Integer, Command> commands = new HashMap<>();
 
-    public InputHandler(GameObjectContainer world) {
-        this.world = world;
-        setupKeyBindings(world);
+    public void bind(int keyCode, Command command) {
+        commands.put(keyCode, command);
     }
 
-    private void setupKeyBindings(JComponent component) {
-        InputMap inputMap = component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = component.getActionMap();
-        int[] keys = {
-                java.awt.event.KeyEvent.VK_W,
-                java.awt.event.KeyEvent.VK_A,
-                java.awt.event.KeyEvent.VK_S,
-                java.awt.event.KeyEvent.VK_D,
-                java.awt.event.KeyEvent.VK_SPACE,
-                java.awt.event.KeyEvent.VK_P,
-                java.awt.event.KeyEvent.VK_ESCAPE
-        };
+    @Override
+    public void keyPressed(KeyEvent e) {
+        Command command = commands.get(e.getKeyCode());
 
-        for (int keyCode : keys) {
-            String pressed = "pressed_" + keyCode;
-            String released = "released_" + keyCode;
-
-            inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, false), pressed);
-            inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, true), released);
-
-            actionMap.put(pressed, new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    GameState current = world.getGameState();
-                    if (current != null) current.keyPressed(keyCode, world);
-                }
-            });
-
-            actionMap.put(released, new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    GameState current = world.getGameState();
-                    if (current != null) current.keyReleased(keyCode, world);
-                }
-            });
+        if (command != null) {
+            command.execute();
         }
     }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        Command command = commands.get(e.getKeyCode());
+
+        if (command != null) {
+            command.stop();
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
 }

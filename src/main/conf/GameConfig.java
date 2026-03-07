@@ -23,8 +23,7 @@ public class GameConfig {
     public static final int PLAYER_SHIP_POINT_COUNT = 3;
 
     public static final int BULLET_RADIUS = 3;
-
-    public static final int ASTEROID_DEFAULT_RADIUS = 40;
+    public static final int ASTEROID_DEFAULT_RADIUS = 20;
     public static final double ASTEROID_DEFAULT_START_X = 0.0;
     public static final double ASTEROID_DEFAULT_START_Y = 0.0;
     public static final double ASTEROID_DEFAULT_VELOCITY_X = 10.0;
@@ -43,15 +42,4 @@ public class GameConfig {
     public static final int PAUSED_OVERLAY_ALPHA = 128;
     public static final String PAUSED_TEXT = "PAUSAT";
 
-    public static final int[] BOUND_KEYS = {
-            KeyEvent.VK_LEFT,
-            KeyEvent.VK_RIGHT,
-            KeyEvent.VK_UP,
-            KeyEvent.VK_DOWN,
-            KeyEvent.VK_SPACE,
-            KeyEvent.VK_A,
-            KeyEvent.VK_D,
-            KeyEvent.VK_W,
-            KeyEvent.VK_S
-    };
 }

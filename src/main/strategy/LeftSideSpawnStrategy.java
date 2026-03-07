@@ -2,7 +2,7 @@ package main.strategy;
 
 
 
-import main.abstractFactory.GameObjectFactory;
+import main.factory.GameObjectFactory;
 import main.conf.GameConfig;
 import main.gameobject.GameObject;
 import main.Vector2D;
@@ -38,5 +38,7 @@ public class LeftSideSpawnStrategy implements SpawnStrategy {
         Vector2D velocity = new Vector2D((deltaX / distance) * speed, (deltaY / distance) * speed);
 
         objects.add(asteroidFactory.createGameObject(spawnX, spawnY, velocity));
+
+
     }
 }

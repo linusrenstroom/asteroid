@@ -31,11 +31,7 @@ public class GameObjectContainer extends JPanel {
         long now = System.nanoTime();
         double deltaTime = (now - lastTime) / GameConfig.NANOS_PER_SECOND;
         lastTime = now;
-
         gameState.update(deltaTime, this);
-
-
-
         removeDeadObjects();
         Toolkit.getDefaultToolkit().sync();
         repaint();

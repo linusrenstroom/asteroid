@@ -1,7 +1,6 @@
-package main.abstractFactory;
+package main.factory;
 
 import main.Vector2D;
-import main.gameobject.Bullet;
 import main.gameobject.GameObject;
 
 public class BulletFactory implements GameObjectFactory {

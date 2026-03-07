@@ -3,7 +3,6 @@ package main.gameobject;
 import main.Vector2D;
 import main.conf.GameConfig;
 import main.util.Point;
-import main.worldStateManagement.GameObjectContainer;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -79,7 +78,7 @@ public class Player extends GameObject {
         return at.createTransformedShape(shipBoundingBox);
     }
 
-    public void shoot(GameObjectContainer world) {
+    public void shoot() {
         if (currentShootCooldown <= 0) {
             double heading = angle - headingOffset;
             Vector2D bulletVel = new Vector2D(
@@ -87,7 +86,6 @@ public class Player extends GameObject {
                     Math.sin(heading) * bulletSpeed
             );
 
-            world.addObject(new Bullet(new Point(position.getX(), position.getY()), bulletVel));
             currentShootCooldown = maxShootCooldown;
         }
     }
@@ -115,8 +113,5 @@ public class Player extends GameObject {
             position.setY(0);
         }
     }
-    @Override
-    public void onCollision(GameObject other) {
 
-    }
 }

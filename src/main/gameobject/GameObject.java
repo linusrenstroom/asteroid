@@ -21,7 +21,6 @@ public abstract class GameObject {
         System.out.println("Collision Detected: " + other.getClass().getName() + " " + this.getClass().getName());
     }
     public abstract Shape getBounds();
-
     public boolean collidesWith(GameObject other) {
         Area a = new Area(this.getBounds());
         a.intersect(new Area(other.getBounds()));

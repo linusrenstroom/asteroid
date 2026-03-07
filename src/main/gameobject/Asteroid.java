@@ -39,14 +39,20 @@ public class Asteroid extends GameObject {
     public void onCollision(GameObject other) {
         if (other instanceof Bullet) {
             this.destroy();
+            other.destroy();
         }
     }
 
     @Override
     public void draw(Graphics2D g) {
-
         g.setColor(Color.GRAY);
-        g.fillOval((int) position.getX(), (int) position.getY(), radius, radius);
+
+        g.fillOval(
+                (int)(position.getX() - radius),
+                (int)(position.getY() - radius),
+                radius * 2,
+                radius * 2
+        );
     }
 
     @Override
@@ -54,8 +60,8 @@ public class Asteroid extends GameObject {
         return new Ellipse2D.Double(
                 position.getX() - radius,
                 position.getY() - radius,
-                radius * 2,
-                radius * 2
+                radius ,
+                radius
         );
     }
 }
