@@ -36,29 +36,31 @@ public class Main extends JFrame {
                 GameConfig.SCREEN_HEIGHT * GameConfig.PLAYER_START_Y_RATIO
         ));
 
-        runningState = new RunningState(player);
-        pausedState = new PausedState(runningState);
+        runningState = new RunningState();
+
         gameOverState = new GameOverState();
         menuState = new MenuState();
 
 
-        InputHandler input = new InputHandler();
 
-        input.bind(KeyEvent.VK_W, new AccelerateCommand(player));
-        input.bind(KeyEvent.VK_A, new RotateLeftCommand(player));
-        input.bind(KeyEvent.VK_D, new RotateRightCommand(player));
-        input.bind(KeyEvent.VK_SPACE, new ShootCommand(player));
+
+
 
 
         SpawnManager spawnManager = new SpawnManager(new AsteroidFactory());
-        world = new GameObjectContainer(spawnManager, runningState);
+        world = new GameObjectContainer(spawnManager, menuState);
+
         world.addObject(player);
         world.setPreferredSize(new Dimension(
                 GameConfig.SCREEN_WIDTH,
                 GameConfig.SCREEN_HEIGHT
         ));
         add(world);
-
+        InputHandler input = new InputHandler(world);
+        input.bind(KeyEvent.VK_W, new AccelerateCommand(player));
+        input.bind(KeyEvent.VK_A, new RotateLeftCommand(player));
+        input.bind(KeyEvent.VK_D, new RotateRightCommand(player));
+        input.bind(KeyEvent.VK_SPACE, new ShootCommand(player));
         world.addKeyListener(input);
         world.setFocusable(true);
         world.requestFocusInWindow();

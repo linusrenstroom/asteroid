@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class PausedState implements GameState{
-    private GameState previousState;
+    private final GameState previousState;
     public PausedState(GameState previousState) {
         this.previousState = previousState;
     }
@@ -26,9 +26,8 @@ public class PausedState implements GameState{
 
     @Override
     public void keyPressed(int keyCode, GameObjectContainer context) {
-        if (keyCode == KeyEvent.VK_P || keyCode == KeyEvent.VK_ESCAPE) {
+        if (keyCode == KeyEvent.VK_ESCAPE) {
             context.setGameState(previousState);
-            System.out.println("PAUSED");
         }
     }
 
@@ -36,4 +35,5 @@ public class PausedState implements GameState{
     public void keyReleased(int keyCode, GameObjectContainer context) {
 
     }
+
 }

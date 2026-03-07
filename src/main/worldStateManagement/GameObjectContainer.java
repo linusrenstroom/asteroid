@@ -4,9 +4,13 @@ import main.gameobject.GameObject;
 import main.conf.GameConfig;
 import main.gameobject.Player;
 import main.state.GameState;
+import main.state.PausedState;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,4 +95,5 @@ public class GameObjectContainer extends JPanel {
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
+
 }
