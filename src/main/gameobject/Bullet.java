@@ -2,12 +2,15 @@ package main.gameobject;
 
 import main.Vector2D;
 import main.conf.GameConfig;
+import main.observer.Observable;
+import main.observer.Observer;
 import main.util.Point;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
 public class Bullet extends GameObject {
+
     private final int radius = GameConfig.BULLET_RADIUS;
 
     public Bullet(Point startPos, Vector2D velocity) {
@@ -42,4 +45,6 @@ public class Bullet extends GameObject {
     public double getRadius() {
         return radius;
     }
+
+
 }

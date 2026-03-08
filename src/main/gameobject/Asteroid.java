@@ -2,12 +2,18 @@ package main.gameobject;
 
 import main.Vector2D;
 import main.conf.GameConfig;
+import main.observer.Observable;
+import main.observer.Observer;
 import main.util.Point;
+
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Asteroid extends GameObject {
+public class Asteroid extends GameObject implements Observable {
+    List<Observer> observerList = new ArrayList<>();
     private int radius;
 
     public Asteroid() {
@@ -27,11 +33,17 @@ public class Asteroid extends GameObject {
        position.setX(position.getX()+ deltaTime* velocity.x);
        position.setY(position.getY()+ deltaTime* velocity.y);
 
-        if (position.getX() < -GameConfig.ASTEROID_DESPAWN_MARGIN ||
-                position.getX() > GameConfig.SCREEN_WIDTH + GameConfig.ASTEROID_DESPAWN_MARGIN ||
-                position.getY() < -GameConfig.ASTEROID_DESPAWN_MARGIN ||
-                position.getY() > GameConfig.SCREEN_HEIGHT + GameConfig.ASTEROID_DESPAWN_MARGIN) {
-            this.destroy();
+        if (position.getX() < -radius) {
+            position.setX(GameConfig.SCREEN_WIDTH + radius);
+        } else if (position.getX() > GameConfig.SCREEN_WIDTH + radius) {
+            position.setX(-radius);
+        }
+
+        // Screen wrap Y
+        if (position.getY() < -radius) {
+            position.setY(GameConfig.SCREEN_HEIGHT + radius);
+        } else if (position.getY() > GameConfig.SCREEN_HEIGHT + radius) {
+            position.setY(-radius);
         }
 
     }
@@ -39,7 +51,11 @@ public class Asteroid extends GameObject {
     public void onCollision(GameObject other) {
         if (other instanceof Bullet) {
             this.destroy();
+            notifyObservers();
             other.destroy();
+        }
+        if(other instanceof Player) {
+            this.destroy();
         }
     }
 
@@ -60,8 +76,25 @@ public class Asteroid extends GameObject {
         return new Ellipse2D.Double(
                 position.getX() - radius,
                 position.getY() - radius,
-                radius ,
-                radius
+                radius * 2,
+                radius * 2
         );
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observerList.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observerList.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+            for (Observer observer : observerList) {
+                observer.update(this);
+            }
     }
 }

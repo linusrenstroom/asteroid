@@ -5,19 +5,19 @@ import java.awt.event.KeyEvent;
 
 public class RunningState implements GameState {
 
-    public RunningState() {
-    }
     @Override
     public void update(double deltaTime, GameObjectContainer context) {
-        context.updateObjects(deltaTime);
         context.checkCollisions();
+        if(context.getPlayer().isDead()){
+            context.setGameState(new GameOverState());
+        }
         context.getSpawnManager().update(deltaTime, context.getObjects());
         context.updateObjects(deltaTime);
-
     }
 
     @Override
-    public void draw(Graphics2D g) {}
+    public void draw(Graphics2D g) {
+    }
 
     @Override
     public void keyPressed(int keyCode, GameObjectContainer context) {

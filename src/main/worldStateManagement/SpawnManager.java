@@ -6,12 +6,12 @@ import main.gameobject.GameObject;
 import main.strategy.LeftSideSpawnStrategy;
 import main.strategy.RightSideSpawnStrategy;
 import main.strategy.SpawnStrategy;
+import main.strategy.TopSideSpawnStrategy;
 
 import java.util.List;
 import java.util.Random;
 
 public class SpawnManager {
-
     private final SpawnStrategy[] strategies;
     private SpawnStrategy spawnStrategy;
     private final Random random = new Random();
@@ -23,6 +23,7 @@ public class SpawnManager {
         this.strategies = new SpawnStrategy[] {
                 new LeftSideSpawnStrategy(factory),
                 new RightSideSpawnStrategy(factory),
+                new TopSideSpawnStrategy(factory)
         };
     }
 

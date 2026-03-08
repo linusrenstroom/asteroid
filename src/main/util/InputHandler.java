@@ -30,9 +30,7 @@ public class InputHandler implements KeyListener {
         }
 
         GameState state = context.getGameState();
-        if (state != null) {
-            state.keyPressed(e.getKeyCode(), context);
-        }
+        state.keyPressed(e.getKeyCode(),context);
     }
 
     @Override
@@ -43,9 +41,8 @@ public class InputHandler implements KeyListener {
         }
 
         GameState state = context.getGameState();
-        if (state != null) {
+
             state.keyReleased(e.getKeyCode(), context);
-        }
     }
 
     @Override

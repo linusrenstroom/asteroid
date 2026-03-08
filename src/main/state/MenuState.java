@@ -28,9 +28,13 @@ public class MenuState implements GameState{
 
     @Override
     public void keyPressed(int keyCode, GameObjectContainer context) {
-      if(keyCode == KeyEvent.VK_ENTER){
-          context.setGameState(new RunningState());
-      }
+        if(keyCode == KeyEvent.VK_ENTER){
+            context.reset();
+            context.setGameState(new RunningState());
+        }
+        if(keyCode == KeyEvent.VK_ESCAPE){
+            System.exit(0);
+        }
     }
 
     @Override

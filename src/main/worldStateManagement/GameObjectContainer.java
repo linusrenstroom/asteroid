@@ -3,30 +3,38 @@ package main.worldStateManagement;
 import main.gameobject.GameObject;
 import main.conf.GameConfig;
 import main.gameobject.Player;
+import main.observer.ScoreObserver;
+import main.observer.LifeObserver;
+import main.observer.UiObserver;
 import main.state.GameState;
-import main.state.PausedState;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameObjectContainer extends JPanel {
+public class GameObjectContainer extends JPanel  {
     private final List<GameObject> objects = new ArrayList<>();
     private final SpawnManager spawnManager;
+    private final List<UiObserver> uiObservers = new ArrayList<>();
+
+
+
+    private final Player player;
     private GameState gameState;
     private long lastTime;
 
-    public GameObjectContainer(SpawnManager spawnManager, GameState initialState) {
+    public GameObjectContainer(SpawnManager spawnManager, Player player, GameState initialState) {
         this.spawnManager = spawnManager;
+        this.player = player;
         this.gameState = initialState;
         this.lastTime = System.nanoTime();
+        LifeObserver lifeObserver = new LifeObserver();
+        player.addObserver(lifeObserver);
+        uiObservers.add(lifeObserver);
         setFocusable(true);
         setBackground(Color.DARK_GRAY);
-
+        objects.add(player);
         Timer timer = new Timer(GameConfig.GAME_LOOP_DELAY_MS, e -> gameLoop());
         timer.start();
     }
@@ -78,6 +86,18 @@ public class GameObjectContainer extends JPanel {
             obj.draw(g2);
         }
         gameState.draw(g2);
+        for (UiObserver uiObs : uiObservers) {
+            uiObs.draw(g2);
+        }
+
+    }
+    public Player getPlayer() {
+        return player;
+    }
+    public void reset(){
+        objects.clear();
+        player.reset();
+        objects.add(player);
     }
 
     public List<GameObject> getObjects() {

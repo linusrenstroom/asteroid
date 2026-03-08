@@ -6,7 +6,9 @@ import main.command.RotateRightCommand;
 import main.command.ShootCommand;
 import main.factory.*;
 import main.conf.GameConfig;
+import main.gameobject.GameObject;
 import main.gameobject.Player;
+import main.observer.ScoreObserver;
 import main.state.GameOverState;
 import main.state.MenuState;
 import main.state.PausedState;
@@ -26,6 +28,7 @@ public class Main extends JFrame {
     private PausedState pausedState;
     private GameOverState gameOverState;
     private MenuState menuState;
+
 
     public Main() {
         super(GameConfig.WINDOW_TITLE);
@@ -47,20 +50,19 @@ public class Main extends JFrame {
 
 
 
-        SpawnManager spawnManager = new SpawnManager(new AsteroidFactory());
-        world = new GameObjectContainer(spawnManager, menuState);
-
-        world.addObject(player);
+        SpawnManager spawnManager = new SpawnManager( new AsteroidFactory());
+        world = new GameObjectContainer(spawnManager, player, menuState);
         world.setPreferredSize(new Dimension(
                 GameConfig.SCREEN_WIDTH,
                 GameConfig.SCREEN_HEIGHT
         ));
         add(world);
+        GameObjectFactory bulletFactory = new BulletFactory();
         InputHandler input = new InputHandler(world);
         input.bind(KeyEvent.VK_W, new AccelerateCommand(player));
         input.bind(KeyEvent.VK_A, new RotateLeftCommand(player));
         input.bind(KeyEvent.VK_D, new RotateRightCommand(player));
-        input.bind(KeyEvent.VK_SPACE, new ShootCommand(player));
+        input.bind(KeyEvent.VK_SPACE, new ShootCommand(player,bulletFactory));
         world.addKeyListener(input);
         world.setFocusable(true);
         world.requestFocusInWindow();
