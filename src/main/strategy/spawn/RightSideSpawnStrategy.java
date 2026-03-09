@@ -1,4 +1,4 @@
-package main.strategy;
+package main.strategy.spawn;
 
 import main.factory.GameObjectFactory;
 import main.conf.GameConfig;

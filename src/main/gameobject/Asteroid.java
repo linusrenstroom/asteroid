@@ -4,6 +4,8 @@ import main.Vector2D;
 import main.conf.GameConfig;
 import main.observer.Observable;
 import main.observer.Observer;
+import main.strategy.movement.LinearMovement;
+import main.strategy.movement.decorator.WrappingMovementStrategy;
 import main.util.Point;
 
 
@@ -20,32 +22,19 @@ public class Asteroid extends GameObject implements Observable {
         this.radius = GameConfig.ASTEROID_DEFAULT_RADIUS;
         this.position = new Point(GameConfig.ASTEROID_DEFAULT_START_X, GameConfig.ASTEROID_DEFAULT_START_Y);
         this.velocity = new Vector2D(GameConfig.ASTEROID_DEFAULT_VELOCITY_X, GameConfig.ASTEROID_DEFAULT_VELOCITY_Y);
+        this.movementStrategy = new WrappingMovementStrategy(new LinearMovement(), radius);
     }
 
     public Asteroid(int radius, double posX, double posY, double velX, double velY) {
         this.radius = radius;
         this.position = new Point(posX, posY);
         this.velocity = new Vector2D(velX, velY);
+        this.movementStrategy = new WrappingMovementStrategy(new LinearMovement(), radius);
     }
 
     @Override
     public void update(double deltaTime) {
-       position.setX(position.getX()+ deltaTime* velocity.x);
-       position.setY(position.getY()+ deltaTime* velocity.y);
-
-        if (position.getX() < -radius) {
-            position.setX(GameConfig.SCREEN_WIDTH + radius);
-        } else if (position.getX() > GameConfig.SCREEN_WIDTH + radius) {
-            position.setX(-radius);
-        }
-
-        // Screen wrap Y
-        if (position.getY() < -radius) {
-            position.setY(GameConfig.SCREEN_HEIGHT + radius);
-        } else if (position.getY() > GameConfig.SCREEN_HEIGHT + radius) {
-            position.setY(-radius);
-        }
-
+        super.update(deltaTime);
     }
     @Override
     public void onCollision(GameObject other) {

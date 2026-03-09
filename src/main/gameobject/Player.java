@@ -2,10 +2,10 @@ package main.gameobject;
 
 import main.Vector2D;
 import main.conf.GameConfig;
-import main.factory.BulletFactory;
-import main.factory.GameObjectFactory;
-import main.observer.Observer; // Assuming this is your base interface
+import main.observer.Observer;
 import main.observer.Observable;
+import main.strategy.movement.PlayerMovement;
+import main.strategy.movement.decorator.WrappingMovementStrategy;
 import main.util.Point;
 
 import java.awt.*;
@@ -15,13 +15,6 @@ import java.util.List;
 
 public class Player extends GameObject implements Observable {
     private final Polygon shipBoundingBox;
-    private final double rotationSpeed = GameConfig.PLAYER_ROTATION_SPEED;
-    private final double acceleration = GameConfig.PLAYER_ACCELERATION;
-    private final double dragPerSecond = GameConfig.PLAYER_DRAG_PER_SECOND;
-    private final double headingOffset = GameConfig.PLAYER_HEADING_OFFSET_RADIANS;
-    private final double bulletSpeed = GameConfig.PLAYER_BULLET_SPEED;
-    private final double maxShootCooldown = GameConfig.PLAYER_SHOOT_COOLDOWN;
-    private GameObjectFactory bulletFactory = new BulletFactory();
     private int lives = 3;
     private double angle;
     private boolean move;
@@ -39,28 +32,13 @@ public class Player extends GameObject implements Observable {
                 GameConfig.PLAYER_SHIP_POINT_COUNT
         );
         this.angle = 0;
+        this.movementStrategy = new WrappingMovementStrategy(new PlayerMovement(), 0);
     }
 
     @Override
     public void update(double deltaTime) {
-        int rotationInput = (rotateRight ? 1 : 0) - (rotateLeft ? 1 : 0);
-        angle += rotationInput * rotationSpeed * deltaTime;
-        double heading = angle - headingOffset;
-        if (move) {
-            velocity = velocity.add(new Vector2D(
-                    Math.cos(heading) * acceleration * deltaTime,
-                    Math.sin(heading) * acceleration * deltaTime
-            ));
-        }
-        if (currentShootCooldown > 0) {
-            currentShootCooldown -= deltaTime;
-        }
-        velocity = velocity.multiply(Math.pow(dragPerSecond, deltaTime));
-
-        position.setX(position.getX() + velocity.x * deltaTime);
-        position.setY(position.getY() + velocity.y * deltaTime);
-
-        handleScreenWrapping();
+        super.update(deltaTime);
+        if (currentShootCooldown > 0) currentShootCooldown -= deltaTime;
     }
 
     @Override
@@ -80,14 +58,6 @@ public class Player extends GameObject implements Observable {
         at.translate(position.getX(), position.getY());
         at.rotate(angle);
         return at.createTransformedShape(shipBoundingBox);
-    }
-
-    private void handleScreenWrapping() {
-        if (position.getX() < 0) position.setX(GameConfig.SCREEN_WIDTH);
-        else if (position.getX() > GameConfig.SCREEN_WIDTH) position.setX(0);
-
-        if (position.getY() < 0) position.setY(GameConfig.SCREEN_HEIGHT);
-        else if (position.getY() > GameConfig.SCREEN_HEIGHT) position.setY(0);
     }
 
     @Override
@@ -148,4 +118,16 @@ public class Player extends GameObject implements Observable {
     public void setRotateLeft(boolean on) { rotateLeft = on; }
     public void setRotateRight(boolean on) { rotateRight = on; }
     public int getLives() { return lives; }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
+    public boolean isMoving()        { return move; }
+    public boolean isRotatingLeft()  { return rotateLeft; }
+    public boolean isRotatingRight() { return rotateRight; }
 }

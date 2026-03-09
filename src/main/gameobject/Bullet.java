@@ -4,6 +4,8 @@ import main.Vector2D;
 import main.conf.GameConfig;
 import main.observer.Observable;
 import main.observer.Observer;
+import main.strategy.movement.LinearMovement;
+import main.strategy.movement.decorator.DespawningMovementStrategy;
 import main.util.Point;
 
 import java.awt.*;
@@ -16,19 +18,15 @@ public class Bullet extends GameObject {
     public Bullet(Point startPos, Vector2D velocity) {
         this.position = new Point(startPos.getX(), startPos.getY());
         this.velocity = velocity;
+        this.movementStrategy = new DespawningMovementStrategy(
+                new LinearMovement(),
+               0
+        );
     }
 
     @Override
     public void update(double deltaTime) {
-        position.setX(position.getX() + velocity.x * deltaTime);
-        position.setY(position.getY() + velocity.y * deltaTime);
-
-        if (position.getX() < -GameConfig.ASTEROID_DESPAWN_MARGIN ||
-                position.getX() > GameConfig.SCREEN_WIDTH + GameConfig.ASTEROID_DESPAWN_MARGIN ||
-                position.getY() < -GameConfig.ASTEROID_DESPAWN_MARGIN ||
-                position.getY() > GameConfig.SCREEN_HEIGHT + GameConfig.ASTEROID_DESPAWN_MARGIN) {
-            destroy();
-        }
+        super.update(deltaTime);
     }
 
     @Override

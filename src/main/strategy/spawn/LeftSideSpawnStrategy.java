@@ -1,4 +1,6 @@
-package main.strategy;
+package main.strategy.spawn;
+
+
 
 import main.factory.GameObjectFactory;
 import main.conf.GameConfig;
@@ -8,23 +10,25 @@ import main.Vector2D;
 import java.util.List;
 import java.util.Random;
 
-public class TopSideSpawnStrategy implements SpawnStrategy {
+public class LeftSideSpawnStrategy implements SpawnStrategy {
 
     private final GameObjectFactory asteroidFactory;
     private final Random random = new Random();
 
-    public TopSideSpawnStrategy(GameObjectFactory asteroidFactory) {
+    public LeftSideSpawnStrategy(GameObjectFactory asteroidFactory) {
         this.asteroidFactory = asteroidFactory;
     }
 
     @Override
     public void spawn(List<GameObject> objects, double gameTime) {
-        double spawnX = random.nextDouble() * GameConfig.SCREEN_WIDTH;
-        double spawnY = -GameConfig.SPAWN_OFFSCREEN_MARGIN;
+        double spawnX = -GameConfig.SPAWN_OFFSCREEN_MARGIN;
+        double spawnY = random.nextDouble() * GameConfig.SCREEN_HEIGHT;
+
         double targetX = GameConfig.SCREEN_WIDTH * GameConfig.SPAWN_TARGET_X_OFFSET_FACTOR
                 + (random.nextDouble() * GameConfig.SCREEN_WIDTH * GameConfig.SPAWN_TARGET_X_RANGE_FACTOR);
         double targetY = GameConfig.SCREEN_HEIGHT * GameConfig.SPAWN_TARGET_Y_BASE_FACTOR
                 + (random.nextDouble() * GameConfig.SCREEN_HEIGHT * GameConfig.SPAWN_TARGET_Y_RANGE_FACTOR);
+
         double speed = GameConfig.SPAWN_ASTEROID_BASE_SPEED
                 + gameTime * GameConfig.SPAWN_ASTEROID_SPEED_INCREASE_PER_SECOND;
 
@@ -34,5 +38,7 @@ public class TopSideSpawnStrategy implements SpawnStrategy {
         Vector2D velocity = new Vector2D((deltaX / distance) * speed, (deltaY / distance) * speed);
 
         objects.add(asteroidFactory.createGameObject(spawnX, spawnY, velocity));
+
+
     }
 }

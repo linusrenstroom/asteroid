@@ -3,10 +3,10 @@ package main.worldStateManagement;
 import main.factory.GameObjectFactory;
 import main.conf.GameConfig;
 import main.gameobject.GameObject;
-import main.strategy.LeftSideSpawnStrategy;
-import main.strategy.RightSideSpawnStrategy;
-import main.strategy.SpawnStrategy;
-import main.strategy.TopSideSpawnStrategy;
+import main.strategy.spawn.LeftSideSpawnStrategy;
+import main.strategy.spawn.RightSideSpawnStrategy;
+import main.strategy.spawn.SpawnStrategy;
+import main.strategy.spawn.TopSideSpawnStrategy;
 
 import java.util.List;
 import java.util.Random;
