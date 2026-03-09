@@ -1,6 +1,6 @@
 package main.strategy;
 
-import main.abstractFactory.GameObjectFactory;
+import main.factory.GameObjectFactory;
 import main.conf.GameConfig;
 import main.gameobject.GameObject;
 import main.Vector2D;

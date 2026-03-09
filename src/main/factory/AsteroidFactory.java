@@ -1,4 +1,4 @@
-package main.abstractFactory;
+package main.factory;
 
 import main.Vector2D;
 import main.conf.GameConfig;

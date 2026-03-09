@@ -12,18 +12,17 @@ public class GameConfig {
 
     public static final double PLAYER_START_X_RATIO = 0.5;
     public static final double PLAYER_START_Y_RATIO = 0.5;
-
+    public static final double PLAYER_SHOOT_COOLDOWN = 0.2;
     public static final double PLAYER_ROTATION_SPEED = 3.5;
-    public static final double PLAYER_ACCELERATION = 200.0;
-    public static final double PLAYER_DRAG_PER_SECOND = 0.35;
-    public static final double PLAYER_BULLET_SPEED = 300.0;
+    public static final double PLAYER_ACCELERATION = 400.0;
+    public static final double PLAYER_DRAG_PER_SECOND = 0.15;
+    public static final double PLAYER_BULLET_SPEED = 600.0;
     public static final double PLAYER_HEADING_OFFSET_RADIANS = Math.PI / 2.0;
     public static final int[] PLAYER_SHIP_X_POINTS = {0, -10, 10};
     public static final int[] PLAYER_SHIP_Y_POINTS = {-15, 10, 10};
     public static final int PLAYER_SHIP_POINT_COUNT = 3;
 
-    public static final int BULLET_RADIUS = 3;
-
+    public static final int BULLET_RADIUS = 4;
     public static final int ASTEROID_DEFAULT_RADIUS = 20;
     public static final double ASTEROID_DEFAULT_START_X = 0.0;
     public static final double ASTEROID_DEFAULT_START_Y = 0.0;
@@ -38,20 +37,9 @@ public class GameConfig {
     public static final double SPAWN_TARGET_Y_RANGE_FACTOR = 0.5;
     public static final double SPAWN_ASTEROID_BASE_SPEED = 100.0;
     public static final double SPAWN_ASTEROID_SPEED_INCREASE_PER_SECOND = 2.0;
-    public static final double BASE_SPAWN_RATE_SECONDS = 1.0;
+    public static final double BASE_SPAWN_RATE_SECONDS = 1;
 
     public static final int PAUSED_OVERLAY_ALPHA = 128;
     public static final String PAUSED_TEXT = "PAUSAT";
 
-    public static final int[] BOUND_KEYS = {
-            KeyEvent.VK_LEFT,
-            KeyEvent.VK_RIGHT,
-            KeyEvent.VK_UP,
-            KeyEvent.VK_DOWN,
-            KeyEvent.VK_SPACE,
-            KeyEvent.VK_A,
-            KeyEvent.VK_D,
-            KeyEvent.VK_W,
-            KeyEvent.VK_S
-    };
 }

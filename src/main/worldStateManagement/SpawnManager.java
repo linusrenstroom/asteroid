@@ -1,21 +1,20 @@
 package main.worldStateManagement;
 
-import main.abstractFactory.GameObjectFactory;
+import main.factory.GameObjectFactory;
 import main.conf.GameConfig;
 import main.gameobject.GameObject;
 import main.strategy.LeftSideSpawnStrategy;
 import main.strategy.RightSideSpawnStrategy;
 import main.strategy.SpawnStrategy;
+import main.strategy.TopSideSpawnStrategy;
 
 import java.util.List;
 import java.util.Random;
 
 public class SpawnManager {
-
     private final SpawnStrategy[] strategies;
     private SpawnStrategy spawnStrategy;
     private final Random random = new Random();
-
     private double gameTime = 0;
     private double nextSpawnTime = 0;
 
@@ -24,6 +23,7 @@ public class SpawnManager {
         this.strategies = new SpawnStrategy[] {
                 new LeftSideSpawnStrategy(factory),
                 new RightSideSpawnStrategy(factory),
+                new TopSideSpawnStrategy(factory)
         };
     }
 
@@ -34,11 +34,9 @@ public class SpawnManager {
     public void update(double deltaTime, List<GameObject> objects) {
         gameTime += deltaTime;
         nextSpawnTime += deltaTime;
-
         if (nextSpawnTime >= GameConfig.BASE_SPAWN_RATE_SECONDS) {
             nextSpawnTime = 0;
             spawnStrategy = strategies[random.nextInt(strategies.length)];
-
             spawnStrategy.spawn(objects, gameTime);
         }
     }
