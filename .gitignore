@@ -1,0 +1,7 @@
+# Ignore the entire output folder
+out/
+# Ignore any rogue class files
+*.class
+# Ignore IntelliJ's internal configuration if you're working solo
+.idea/
+*.iml
