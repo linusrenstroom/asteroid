@@ -1,17 +1,16 @@
 package main.gameobject;
 
+
 import main.Vector2D;
 import main.conf.GameConfig;
-import main.observer.Observer;
 import main.observer.Observable;
+import main.observer.Observer;
 import main.strategy.movement.PlayerMovement;
 import main.strategy.movement.decorator.WrappingMovementStrategy;
-import main.util.Point;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Player extends GameObject implements Observable {
     private final Polygon shipBoundingBox;
@@ -43,13 +42,25 @@ public class Player extends GameObject implements Observable {
 
     @Override
     public void draw(Graphics2D g) {
+
+    }
+
+    @Override
+    public void draw(Graphics2D g) {
         AffineTransform old = g.getTransform();
         g.translate(position.getX(), position.getY());
         g.rotate(angle);
-        g.setColor(Color.WHITE);
+        if (move) {
+            int[] flameX = {-4, 0, 4};
+            int[] flameY = {12, 18 + (int)(Math.random() * 6), 12};
+            g.setColor(Color.BLUE);
+            g.fillPolygon(flameX, flameY, 3);
+        }
+        g.setColor(Color.ORANGE);
         g.fill(shipBoundingBox);
         g.draw(shipBoundingBox);
         g.setTransform(old);
+
     }
 
     @Override
@@ -71,14 +82,18 @@ public class Player extends GameObject implements Observable {
             }
         }
     }
-    public void shoot() {
-        if (canShoot()) {
-//            // 1. Reset the timer
-//            resetShootCooldown();
-//
-//            // 2. Tell everyone: "Hey, I changed! (And specifically, I just shot)"
-//            notifyObservers(bulletFactory.createGameObject(position.getX(),position.getY(), velocity));
-        }
+    public GameObject shoot() {
+        if (!canShoot()) return null;
+        currentShootCooldown = maxShootCooldown;
+
+        double heading = angle - headingOffset;
+        Vector2D fireDirection = new Vector2D(Math.cos(heading), Math.sin(heading));
+
+        double spawnOffset = 25;
+        double spawnX = position.getX() + Math.cos(heading) * spawnOffset;
+        double spawnY = position.getY() + Math.sin(heading) * spawnOffset;
+
+        return bulletFactory.createGameObject(spawnX, spawnY, fireDirection);
     }
 
     private boolean canShoot() {
@@ -96,6 +111,9 @@ public class Player extends GameObject implements Observable {
     public void removeObserver(Observer observer) {
         observers.remove(observer);
     }
+    public void loseLife(){
+        this.lives--;
+    }
 
     @Override
     public void notifyObservers() {
@@ -112,12 +130,11 @@ public class Player extends GameObject implements Observable {
         dead = false;
         notifyObservers();
     }
-
-    // Getters and Setters
     public void setMove(boolean on) { move = on; }
     public void setRotateLeft(boolean on) { rotateLeft = on; }
     public void setRotateRight(boolean on) { rotateRight = on; }
     public int getLives() { return lives; }
+
 
     public double getAngle() {
         return angle;

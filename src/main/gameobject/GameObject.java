@@ -1,12 +1,11 @@
 package main.gameobject;
 
 import main.Vector2D;
+import main.strategy.movement.MovementStrategy;
+import main.util.Point;
 
 import java.awt.*;
 import java.awt.geom.Area;
-
-import main.strategy.movement.MovementStrategy;
-import main.util.Point;
 
 public abstract class GameObject {
 

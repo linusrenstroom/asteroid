@@ -31,7 +31,7 @@ public class Main extends JFrame {
                 GameConfig.SCREEN_HEIGHT * GameConfig.PLAYER_START_Y_RATIO
         ));
 
-        SpawnManager spawnManager = new SpawnManager(new AsteroidFactory());
+        SpawnManager spawnManager = new SpawnManager();
         Game game = new Game(player, spawnManager, new MenuState());
         game.setPreferredSize(new Dimension(GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT));
 
@@ -40,7 +40,7 @@ public class Main extends JFrame {
         input.bind(KeyEvent.VK_W, new AccelerateCommand(player));
         input.bind(KeyEvent.VK_A, new RotateLeftCommand(player));
         input.bind(KeyEvent.VK_D, new RotateRightCommand(player));
-        input.bind(KeyEvent.VK_SPACE, new ShootCommand(player, bulletFactory));
+//        input.bind(KeyEvent.VK_SPACE, new ShootCommand(player, world));
         game.addKeyListener(input);
         game.setFocusable(true);
         game.requestFocusInWindow();

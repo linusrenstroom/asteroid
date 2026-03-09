@@ -14,8 +14,8 @@ import java.awt.geom.Ellipse2D;
 public class Bullet extends GameObject {
 
     private final int radius = GameConfig.BULLET_RADIUS;
-
-    public Bullet(Point startPos, Vector2D velocity) {
+    private final double baseSpeed = GameConfig.BULLET_SPEED;
+    public Bullet(Point startPos, Vector2D direction) {
         this.position = new Point(startPos.getX(), startPos.getY());
         this.velocity = velocity;
         this.movementStrategy = new DespawningMovementStrategy(

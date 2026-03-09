@@ -10,8 +10,5 @@ public class BulletFactory implements GameObjectFactory {
     public GameObject createGameObject(double posX, double posY, Vector2D velocity) {
         return new Bullet(new Point(posX,posY), velocity);
     }
-//    @Override
-//    public GameObject createGameObject(double posX, double posY, Vector2D velocity) {
-//        return new Bullet(n velocity);
-//    }
+
 }
