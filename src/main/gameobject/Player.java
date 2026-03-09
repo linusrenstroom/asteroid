@@ -1,16 +1,19 @@
 package main.gameobject;
 
-
 import main.Vector2D;
 import main.conf.GameConfig;
 import main.observer.Observable;
 import main.observer.Observer;
 import main.strategy.movement.PlayerMovement;
 import main.strategy.movement.decorator.WrappingMovementStrategy;
+import main.util.Point;
+import main.gameobject.asteroids.Asteroid; // Import Asteroid for collision check
+import main.factory.GameObjectFactory;     // Import for the bullet factory
 
-import java.awt.*;
+import java.awt.*;                // Grabs Graphics2D, Color, Polygon, Shape
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.List;             // Explicitly import List
 
 public class Player extends GameObject implements Observable {
     private final Polygon shipBoundingBox;
@@ -19,12 +22,22 @@ public class Player extends GameObject implements Observable {
     private boolean move;
     private boolean rotateLeft;
     private boolean rotateRight;
+
+    // --- Missing Fields for Shooting Logic ---
     private double currentShootCooldown = 0;
+    private final double maxShootCooldown = 0.25;
+    private final double headingOffset = Math.toRadians(90);
+    private final GameObjectFactory bulletFactory;
+    // -----------------------------------------
+
     private final List<Observer> observers = new ArrayList<>();
 
-    public Player(Point startPosition) {
+    // Updated constructor to accept the bullet factory
+    public Player(Point startPosition, GameObjectFactory bulletFactory) {
         this.position = new Point(startPosition.getX(), startPosition.getY());
         this.velocity = new Vector2D(0, 0);
+        this.bulletFactory = bulletFactory;
+
         this.shipBoundingBox = new Polygon(
                 GameConfig.PLAYER_SHIP_X_POINTS,
                 GameConfig.PLAYER_SHIP_Y_POINTS,
@@ -36,13 +49,13 @@ public class Player extends GameObject implements Observable {
 
     @Override
     public void update(double deltaTime) {
+        // Handle rotation based on input booleans
+        double rotationSpeed = 4.0;
+        if (rotateLeft) angle -= rotationSpeed * deltaTime;
+        if (rotateRight) angle += rotationSpeed * deltaTime;
+
         super.update(deltaTime);
         if (currentShootCooldown > 0) currentShootCooldown -= deltaTime;
-    }
-
-    @Override
-    public void draw(Graphics2D g) {
-
     }
 
     @Override
@@ -50,17 +63,18 @@ public class Player extends GameObject implements Observable {
         AffineTransform old = g.getTransform();
         g.translate(position.getX(), position.getY());
         g.rotate(angle);
+
         if (move) {
             int[] flameX = {-4, 0, 4};
             int[] flameY = {12, 18 + (int)(Math.random() * 6), 12};
             g.setColor(Color.BLUE);
             g.fillPolygon(flameX, flameY, 3);
         }
+
         g.setColor(Color.ORANGE);
         g.fill(shipBoundingBox);
         g.draw(shipBoundingBox);
         g.setTransform(old);
-
     }
 
     @Override
@@ -74,7 +88,6 @@ public class Player extends GameObject implements Observable {
     @Override
     public void onCollision(GameObject other) {
         if (other instanceof Asteroid) {
-            System.out.println("Asteroid");
             lives--;
             notifyObservers();
             if (lives <= 0) {
@@ -82,10 +95,12 @@ public class Player extends GameObject implements Observable {
             }
         }
     }
+
     public GameObject shoot() {
         if (!canShoot()) return null;
         currentShootCooldown = maxShootCooldown;
 
+        // Adjust heading so bullet comes out of the front
         double heading = angle - headingOffset;
         Vector2D fireDirection = new Vector2D(Math.cos(heading), Math.sin(heading));
 
@@ -111,8 +126,10 @@ public class Player extends GameObject implements Observable {
     public void removeObserver(Observer observer) {
         observers.remove(observer);
     }
-    public void loseLife(){
+
+    public void loseLife() {
         this.lives--;
+        notifyObservers();
     }
 
     @Override
@@ -130,21 +147,14 @@ public class Player extends GameObject implements Observable {
         dead = false;
         notifyObservers();
     }
+
     public void setMove(boolean on) { move = on; }
     public void setRotateLeft(boolean on) { rotateLeft = on; }
     public void setRotateRight(boolean on) { rotateRight = on; }
     public int getLives() { return lives; }
-
-
-    public double getAngle() {
-        return angle;
-    }
-
-    public void setAngle(double angle) {
-        this.angle = angle;
-    }
-
-    public boolean isMoving()        { return move; }
-    public boolean isRotatingLeft()  { return rotateLeft; }
+    public double getAngle() { return angle; }
+    public void setAngle(double angle) { this.angle = angle; }
+    public boolean isMoving() { return move; }
+    public boolean isRotatingLeft() { return rotateLeft; }
     public boolean isRotatingRight() { return rotateRight; }
 }

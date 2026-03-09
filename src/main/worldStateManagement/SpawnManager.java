@@ -3,7 +3,6 @@ package main.worldStateManagement;
 import main.conf.GameConfig;
 import main.factory.abstractFactory.*;
 import main.gameobject.GameObject;
-import main.strategy.*;
 import main.strategy.spawn.LeftSideSpawnStrategy;
 import main.strategy.spawn.RightSideSpawnStrategy;
 import main.strategy.spawn.SpawnStrategy;

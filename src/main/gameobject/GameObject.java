@@ -3,8 +3,8 @@ package main.gameobject;
 import main.Vector2D;
 import main.strategy.movement.MovementStrategy;
 import main.util.Point;
-
-import java.awt.*;
+import java.awt.Shape;
+import java.awt.Graphics2D;
 import java.awt.geom.Area;
 
 public abstract class GameObject {
