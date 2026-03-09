@@ -1,34 +1,26 @@
+// Main.java
 package main;
 
 import main.command.AccelerateCommand;
 import main.command.RotateLeftCommand;
 import main.command.RotateRightCommand;
 import main.command.ShootCommand;
-import main.factory.*;
+import main.factory.AsteroidFactory;
+import main.factory.BulletFactory;
+import main.factory.GameObjectFactory;
 import main.conf.GameConfig;
-import main.gameobject.GameObject;
 import main.gameobject.Player;
-import main.observer.ScoreObserver;
-import main.state.GameOverState;
 import main.state.MenuState;
-import main.state.PausedState;
-import main.state.RunningState;
-import main.util.Point;
-import main.worldStateManagement.GameObjectContainer;
-import main.worldStateManagement.SpawnManager;
 import main.util.InputHandler;
+import main.util.Point;
+import main.worldStateManagement.Game;
+import main.worldStateManagement.SpawnManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Main extends JFrame {
-
-    private GameObjectContainer world;
-    private RunningState runningState;
-    private PausedState pausedState;
-    private GameOverState gameOverState;
-    private MenuState menuState;
-
 
     public Main() {
         super(GameConfig.WINDOW_TITLE);
@@ -39,34 +31,21 @@ public class Main extends JFrame {
                 GameConfig.SCREEN_HEIGHT * GameConfig.PLAYER_START_Y_RATIO
         ));
 
-        runningState = new RunningState();
+        SpawnManager spawnManager = new SpawnManager(new AsteroidFactory());
+        Game game = new Game(player, spawnManager, new MenuState());
+        game.setPreferredSize(new Dimension(GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT));
 
-        gameOverState = new GameOverState();
-        menuState = new MenuState();
-
-
-
-
-
-
-
-        SpawnManager spawnManager = new SpawnManager();
-        world = new GameObjectContainer(spawnManager, player, menuState);
-        world.setPreferredSize(new Dimension(
-                GameConfig.SCREEN_WIDTH,
-                GameConfig.SCREEN_HEIGHT
-        ));
-        add(world);
         GameObjectFactory bulletFactory = new BulletFactory();
-        InputHandler input = new InputHandler(world);
+        InputHandler input = new InputHandler(game);
         input.bind(KeyEvent.VK_W, new AccelerateCommand(player));
         input.bind(KeyEvent.VK_A, new RotateLeftCommand(player));
         input.bind(KeyEvent.VK_D, new RotateRightCommand(player));
-        input.bind(KeyEvent.VK_SPACE, new ShootCommand(player,world));
-        world.addKeyListener(input);
-        world.setFocusable(true);
-        world.requestFocusInWindow();
+        input.bind(KeyEvent.VK_SPACE, new ShootCommand(player, bulletFactory));
+        game.addKeyListener(input);
+        game.setFocusable(true);
+        game.requestFocusInWindow();
 
+        add(game);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);

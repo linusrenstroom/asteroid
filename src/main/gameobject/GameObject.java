@@ -5,13 +5,20 @@ import main.Vector2D;
 import java.awt.*;
 import java.awt.geom.Area;
 
+import main.strategy.movement.MovementStrategy;
 import main.util.Point;
 
 public abstract class GameObject {
 
     protected Point position;
     protected Vector2D velocity;
-    public abstract void update(double deltaTime);
+    protected MovementStrategy movementStrategy;
+
+    public void update(double deltaTime){
+        if(movementStrategy != null){
+            movementStrategy.move(this, deltaTime);
+        }
+    }
     protected boolean dead = false;
 
     public boolean isDead() { return dead; }
@@ -27,6 +34,15 @@ public abstract class GameObject {
         return !a.isEmpty();
     }
 
+    public Vector2D getVelocity() {
+        return velocity;
+    }
 
+    public void setVelocity(Vector2D velocity) {
+        this.velocity = velocity;
+    }
 
+    public Point getPosition() {
+        return position;
+    }
 }
