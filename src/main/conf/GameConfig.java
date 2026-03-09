@@ -42,4 +42,5 @@ public class GameConfig {
     public static final int PAUSED_OVERLAY_ALPHA = 128;
     public static final String PAUSED_TEXT = "PAUSAT";
 
+    public static final double BULLET_SPEED = 500.0;
 }

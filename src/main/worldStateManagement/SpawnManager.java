@@ -1,43 +1,46 @@
 package main.worldStateManagement;
 
-import main.factory.GameObjectFactory;
 import main.conf.GameConfig;
+import main.factory.abstractFactory.*;
 import main.gameobject.GameObject;
-import main.strategy.LeftSideSpawnStrategy;
-import main.strategy.RightSideSpawnStrategy;
-import main.strategy.SpawnStrategy;
-import main.strategy.TopSideSpawnStrategy;
+import main.strategy.*;
 
 import java.util.List;
 import java.util.Random;
 
 public class SpawnManager {
     private final SpawnStrategy[] strategies;
-    private SpawnStrategy spawnStrategy;
+    private final AsteroidFactory[] asteroidFactories;
     private final Random random = new Random();
-    private double gameTime = 0;
-    private double nextSpawnTime = 0;
 
-    public SpawnManager(GameObjectFactory factory) {
-        spawnStrategy = new LeftSideSpawnStrategy(factory);
+    private double accumulatedTime = 0;
+    private double totalGameTime = 0;
+
+    public SpawnManager() {
+        this.asteroidFactories = new AsteroidFactory[] {
+                new SmallAsteroidFactory(),
+                new LargeAsteroidFactory(),
+                new StandardAsteroidFactory()
+        };
+
         this.strategies = new SpawnStrategy[] {
-                new LeftSideSpawnStrategy(factory),
-                new RightSideSpawnStrategy(factory),
-                new TopSideSpawnStrategy(factory)
+                new LeftSideSpawnStrategy(),
+                new RightSideSpawnStrategy(),
+                new TopSideSpawnStrategy()
         };
     }
 
-    public void setSpawnStrategy(SpawnStrategy strategy) {
-        this.spawnStrategy = strategy;
-    }
-
     public void update(double deltaTime, List<GameObject> objects) {
-        gameTime += deltaTime;
-        nextSpawnTime += deltaTime;
-        if (nextSpawnTime >= GameConfig.BASE_SPAWN_RATE_SECONDS) {
-            nextSpawnTime = 0;
-            spawnStrategy = strategies[random.nextInt(strategies.length)];
-            spawnStrategy.spawn(objects, gameTime);
+        totalGameTime += deltaTime;
+        accumulatedTime += deltaTime;
+
+        if (accumulatedTime >= GameConfig.BASE_SPAWN_RATE_SECONDS) {
+            accumulatedTime = 0;
+
+            SpawnStrategy strategy = strategies[random.nextInt(strategies.length)];
+            AsteroidFactory factory = asteroidFactories[random.nextInt(asteroidFactories.length)];
+
+            strategy.spawn(objects, factory, totalGameTime);
         }
     }
 }

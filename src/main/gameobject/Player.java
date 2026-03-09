@@ -4,6 +4,7 @@ import main.Vector2D;
 import main.conf.GameConfig;
 import main.factory.BulletFactory;
 import main.factory.GameObjectFactory;
+import main.gameobject.asteroids.Asteroid;
 import main.observer.Observer; // Assuming this is your base interface
 import main.observer.Observable;
 import main.util.Point;
@@ -101,14 +102,18 @@ public class Player extends GameObject implements Observable {
             }
         }
     }
-    public void shoot() {
-        if (canShoot()) {
-//            // 1. Reset the timer
-//            resetShootCooldown();
-//
-//            // 2. Tell everyone: "Hey, I changed! (And specifically, I just shot)"
-//            notifyObservers(bulletFactory.createGameObject(position.getX(),position.getY(), velocity));
-        }
+    public GameObject shoot() {
+        if (!canShoot()) return null;
+        currentShootCooldown = maxShootCooldown;
+
+        double heading = angle - headingOffset;
+        Vector2D fireDirection = new Vector2D(Math.cos(heading), Math.sin(heading));
+
+        double spawnOffset = 20;// e.g. 20.0
+        double spawnX = position.getX() + Math.cos(heading) * spawnOffset;
+        double spawnY = position.getY() + Math.sin(heading) * spawnOffset;
+
+        return bulletFactory.createGameObject(spawnX, spawnY, fireDirection);
     }
 
     private boolean canShoot() {
@@ -126,6 +131,9 @@ public class Player extends GameObject implements Observable {
     public void removeObserver(Observer observer) {
         observers.remove(observer);
     }
+    public void loseLife(){
+        this.lives--;
+    }
 
     @Override
     public void notifyObservers() {
@@ -142,10 +150,9 @@ public class Player extends GameObject implements Observable {
         dead = false;
         notifyObservers();
     }
-
-    // Getters and Setters
     public void setMove(boolean on) { move = on; }
     public void setRotateLeft(boolean on) { rotateLeft = on; }
     public void setRotateRight(boolean on) { rotateRight = on; }
     public int getLives() { return lives; }
+
 }

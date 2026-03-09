@@ -6,7 +6,7 @@ import main.gameobject.GameObject;
 
 public class EnemyShipFactory implements GameObjectFactory {
     @Override
-    public GameObject createGameObject(double posX, double posY, Vector2D velocity) {
-        return new EnemyShip(posX,posY,velocity);
+    public GameObject createGameObject(double posX, double posY, Vector2D direction) {
+        return new EnemyShip(posX, posY, direction.multiply(2));
     }
 }

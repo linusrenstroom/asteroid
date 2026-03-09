@@ -1,25 +1,29 @@
 package main.command;
 
-import main.Vector2D;
 import main.command.Command;
-import main.factory.GameObjectFactory;
+import main.gameobject.GameObject;
 import main.gameobject.Player;
 import main.worldStateManagement.GameObjectContainer;
 
 public class ShootCommand implements Command {
     private final Player player;
-    private final GameObjectFactory bulletFactory;
+    private final GameObjectContainer context;
 
-    public ShootCommand(Player player, GameObjectFactory bulletFactory) {
+    public ShootCommand(Player player, GameObjectContainer context) {
         this.player = player;
-        this.bulletFactory = bulletFactory;
+        this.context = context;
     }
 
     @Override
     public void execute() {
-        player.shoot();
+        GameObject bullet = player.shoot();
+        if (bullet != null) {
+            context.addObject(bullet);
+        }
     }
 
     @Override
-    public void stop() {}
+    public void stop() {
+
+    }
 }

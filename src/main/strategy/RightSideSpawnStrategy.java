@@ -10,15 +10,9 @@ import java.util.Random;
 
 public class RightSideSpawnStrategy implements SpawnStrategy {
 
-    private final GameObjectFactory asteroidFactory;
     private final Random random = new Random();
-
-    public RightSideSpawnStrategy(GameObjectFactory asteroidFactory) {
-        this.asteroidFactory = asteroidFactory;
-    }
-
     @Override
-    public void spawn(List<GameObject> objects, double gameTime) {
+    public void spawn(List<GameObject> objects, GameObjectFactory factory, double gameTime) {
         double spawnX = GameConfig.SCREEN_WIDTH + GameConfig.SPAWN_OFFSCREEN_MARGIN;
         double spawnY = random.nextDouble() * GameConfig.SCREEN_HEIGHT;
 
@@ -35,6 +29,6 @@ public class RightSideSpawnStrategy implements SpawnStrategy {
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         Vector2D velocity = new Vector2D((deltaX / distance) * speed, (deltaY / distance) * speed);
 
-        objects.add(asteroidFactory.createGameObject(spawnX, spawnY, velocity));
+        objects.add(factory.createGameObject(spawnX, spawnY, velocity));
     }
 }

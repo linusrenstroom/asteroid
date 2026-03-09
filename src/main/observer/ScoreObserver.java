@@ -1,8 +1,7 @@
 package main.observer;
 
 
-import main.gameobject.Asteroid;
-import main.gameobject.Bullet;
+import main.gameobject.asteroids.Asteroid;
 
 import java.awt.*;
 
