@@ -1,44 +1,58 @@
-package main;
+// Game.java — passes this::setGameState as the changeState callback
+package main.worldStateManagement;
 
 import main.gameobject.Player;
-import main.observer.LifeObserver;
-import main.state.PlayingState;
-import main.ui.GamePanel;
-import main.util.Point;
-import main.worldStateManagement.GameLoop;
-import main.worldStateManagement.SpawnManager;
-import main.worldStateManagement.World;
+import main.state.GameState;
 
-import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
 
-public class Game {
-    public Game() {
-        Player player = new Player(new Point(400, 300));
-        SpawnManager spawnManager = new SpawnManager();
-        World world = new World(player, spawnManager, new PlayingState());
+public class Game extends JPanel {
+    private final World world;
+    private final Hud hud;
+    private final GameLoop gameLoop;
+    private GameState gameState;
 
-        LifeObserver lifeObserver = new LifeObserver();
-        player.addObserver(lifeObserver);
+    public Game(Player player, SpawnManager spawnManager, GameState initialState) {
+        this.world = new World(player, spawnManager);
+        this.hud = new Hud(player);
+        this.gameState = initialState;
+        this.gameLoop = new GameLoop(this::update, this::render);
 
-        GamePanel panel = new GamePanel(world);
-        panel.addUiObserver(lifeObserver);
-
-        GameLoop loop = new GameLoop(world, panel);
-        GameFacade facade = new GameFacade(world, loop, panel);
-
-        // wire input
-        panel.addKeyListener(new InputHandler(facade));
-
-        JFrame frame = new JFrame("Asteroids");
-        frame.add(panel);
-        frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-
-        facade.startGame();
+        setFocusable(true);
+        setBackground(Color.DARK_GRAY);
+        gameLoop.start();
     }
 
-    public static void main(String[] args) {
-        new Game();
+    private void update(double deltaTime) {
+        gameState.update(deltaTime, world, this::setGameState);
     }
+
+    private void render() {
+        Toolkit.getDefaultToolkit().sync();
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        world.draw(g2);
+        gameState.draw(g2);
+        hud.draw(g2);
+    }
+
+    public void handleKeyPressed(int keyCode) {
+        gameState.keyPressed(keyCode, world, this::setGameState);
+    }
+
+    public void handleKeyReleased(int keyCode) {
+        gameState.keyReleased(keyCode, world, this::setGameState);
+    }
+
+    public void setGameState(GameState gameState) { this.gameState = gameState; }
+    public GameState getGameState()               { return gameState; }
+    public World getWorld()                       { return world; }
+    public Hud getHud()                           { return hud; }
 }

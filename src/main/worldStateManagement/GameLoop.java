@@ -1,38 +1,42 @@
 package main.worldStateManagement;
 
 import main.conf.GameConfig;
-import main.worldStateManagement.GamePanel;
 
-import javax.swing.Timer;
-import java.awt.Toolkit;
+
+import javax.swing.*;
+import java.util.function.DoubleConsumer;
 
 public class GameLoop {
-    private final World world;
-    private final GamePanel panel;
+    private final Timer timer;
     private long lastTime;
-    private Timer timer;
+    private final DoubleConsumer onUpdate;
+    private final Runnable onRender;
 
-    public GameLoop(World world, GamePanel panel) {
-        this.world = world;
-        this.panel = panel;
+    public GameLoop(DoubleConsumer onUpdate, Runnable onRender) {
+        this.onUpdate = onUpdate;
+        this.onRender = onRender;
+        this.lastTime = System.nanoTime();
+        this.timer = new Timer(GameConfig.GAME_LOOP_DELAY_MS, e -> tick());
     }
-
-    public void start() {
-        lastTime = System.nanoTime();
-        timer = new Timer(GameConfig.GAME_LOOP_DELAY_MS, e -> tick());
-        timer.start();
-    }
-
-    public void stop()   { if (timer != null) timer.stop(); }
-    public void pause()  { if (timer != null) timer.stop(); }
-    public void resume() { lastTime = System.nanoTime(); if (timer != null) timer.start(); }
 
     private void tick() {
         long now = System.nanoTime();
         double deltaTime = (now - lastTime) / GameConfig.NANOS_PER_SECOND;
         lastTime = now;
-        world.update(deltaTime);
-        Toolkit.getDefaultToolkit().sync();
-        panel.repaint();
+        onUpdate.accept(deltaTime);
+        onRender.run();
+    }
+
+    public void start() {
+        lastTime = System.nanoTime(); // reset on start to avoid huge first delta
+        timer.start();
+    }
+
+    public void stop() {
+        timer.stop();
+    }
+
+    public boolean isRunning() {
+        return timer.isRunning();
     }
 }

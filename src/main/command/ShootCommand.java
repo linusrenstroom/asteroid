@@ -1,10 +1,7 @@
 package main.command;
 
-import main.Vector2D;
-import main.command.Command;
 import main.factory.GameObjectFactory;
 import main.gameobject.Player;
-import main.worldStateManagement.GameObjectContainer;
 
 public class ShootCommand implements Command {
     private final Player player;

@@ -1,17 +1,17 @@
+// MenuState.java
 package main.state;
 
 import main.conf.GameConfig;
-import main.gameobject.Player;
-import main.worldStateManagement.GameObjectContainer;
+import main.worldStateManagement.World;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.function.Consumer;
 
-public class MenuState implements GameState{
+public class MenuState implements GameState {
+
     @Override
-    public void update(double deltaTime, GameObjectContainer context) {
-
-    }
+    public void update(double deltaTime, World world, Consumer<GameState> changeState) {}
 
     @Override
     public void draw(Graphics2D g) {
@@ -27,19 +27,16 @@ public class MenuState implements GameState{
     }
 
     @Override
-    public void keyPressed(int keyCode, GameObjectContainer context) {
-        if(keyCode == KeyEvent.VK_ENTER){
-            context.reset();
-            context.setGameState(new RunningState());
+    public void keyPressed(int keyCode, World world, Consumer<GameState> changeState) {
+        if (keyCode == KeyEvent.VK_ENTER) {
+            world.reset();
+            changeState.accept(new RunningState());
         }
-        if(keyCode == KeyEvent.VK_ESCAPE){
+        if (keyCode == KeyEvent.VK_ESCAPE) {
             System.exit(0);
         }
     }
 
     @Override
-    public void keyReleased(int keyCode, GameObjectContainer context) {
-
-    }
-
+    public void keyReleased(int keyCode, World world, Consumer<GameState> changeState) {}
 }
