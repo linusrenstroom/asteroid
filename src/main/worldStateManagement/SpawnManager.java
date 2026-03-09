@@ -4,6 +4,10 @@ import main.conf.GameConfig;
 import main.factory.abstractFactory.*;
 import main.gameobject.GameObject;
 import main.strategy.*;
+import main.strategy.spawn.LeftSideSpawnStrategy;
+import main.strategy.spawn.RightSideSpawnStrategy;
+import main.strategy.spawn.SpawnStrategy;
+import main.strategy.spawn.TopSideSpawnStrategy;
 
 import java.util.List;
 import java.util.Random;

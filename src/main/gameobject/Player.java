@@ -1,17 +1,16 @@
 package main.gameobject;
 
+
 import main.Vector2D;
 import main.conf.GameConfig;
-import main.observer.Observer;
 import main.observer.Observable;
+import main.observer.Observer;
 import main.strategy.movement.PlayerMovement;
 import main.strategy.movement.decorator.WrappingMovementStrategy;
-import main.util.Point;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Player extends GameObject implements Observable {
     private final Polygon shipBoundingBox;
@@ -39,6 +38,11 @@ public class Player extends GameObject implements Observable {
     public void update(double deltaTime) {
         super.update(deltaTime);
         if (currentShootCooldown > 0) currentShootCooldown -= deltaTime;
+    }
+
+    @Override
+    public void draw(Graphics2D g) {
+
     }
 
     @Override
