@@ -52,6 +52,7 @@ public class Player extends GameObject implements Observable {
                     Math.cos(heading) * acceleration * deltaTime,
                     Math.sin(heading) * acceleration * deltaTime
             ));
+
         }
         if (currentShootCooldown > 0) {
             currentShootCooldown -= deltaTime;
@@ -69,10 +70,17 @@ public class Player extends GameObject implements Observable {
         AffineTransform old = g.getTransform();
         g.translate(position.getX(), position.getY());
         g.rotate(angle);
-        g.setColor(Color.WHITE);
+        if (move) {
+            int[] flameX = {-4, 0, 4};
+            int[] flameY = {12, 18 + (int)(Math.random() * 6), 12};
+            g.setColor(Color.BLUE);
+            g.fillPolygon(flameX, flameY, 3);
+        }
+        g.setColor(Color.ORANGE);
         g.fill(shipBoundingBox);
         g.draw(shipBoundingBox);
         g.setTransform(old);
+
     }
 
     @Override
@@ -109,7 +117,7 @@ public class Player extends GameObject implements Observable {
         double heading = angle - headingOffset;
         Vector2D fireDirection = new Vector2D(Math.cos(heading), Math.sin(heading));
 
-        double spawnOffset = 20;// e.g. 20.0
+        double spawnOffset = 25;
         double spawnX = position.getX() + Math.cos(heading) * spawnOffset;
         double spawnY = position.getY() + Math.sin(heading) * spawnOffset;
 
