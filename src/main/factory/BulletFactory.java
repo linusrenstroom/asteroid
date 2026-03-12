@@ -7,8 +7,8 @@ import main.util.Point;
 
 public class BulletFactory implements GameObjectFactory {
     @Override
-    public GameObject createGameObject(double posX, double posY, Vector2D velocity) {
-        return new Bullet(new Point(posX,posY), velocity);
+    public GameObject createGameObject(Point position, Vector2D velocity) {
+        return new Bullet(position, velocity);
     }
 
 }

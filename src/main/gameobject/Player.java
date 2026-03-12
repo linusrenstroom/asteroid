@@ -2,20 +2,15 @@ package main.gameobject;
 
 import main.Vector2D;
 import main.conf.GameConfig;
-import main.observer.Observable;
-import main.observer.Observer;
+import main.observer.Event;
 import main.strategy.movement.PlayerMovement;
 import main.strategy.movement.decorator.WrappingMovementStrategy;
 import main.util.Point;
-import main.gameobject.asteroids.Asteroid; // Import Asteroid for collision check
-import main.factory.GameObjectFactory;     // Import for the bullet factory
-
-import java.awt.*;                // Grabs Graphics2D, Color, Polygon, Shape
+import main.gameobject.asteroids.Asteroid;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.List;             // Explicitly import List
 
-public class Player extends GameObject implements Observable {
+public class Player extends GameObject {
     private final Polygon shipBoundingBox;
     private int lives = 3;
     private double angle;
@@ -23,21 +18,13 @@ public class Player extends GameObject implements Observable {
     private boolean rotateLeft;
     private boolean rotateRight;
 
-    // --- Missing Fields for Shooting Logic ---
     private double currentShootCooldown = 0;
     private final double maxShootCooldown = 0.25;
     private final double headingOffset = Math.toRadians(90);
-    private final GameObjectFactory bulletFactory;
-    // -----------------------------------------
 
-    private final List<Observer> observers = new ArrayList<>();
-
-    // Updated constructor to accept the bullet factory
-    public Player(Point startPosition, GameObjectFactory bulletFactory) {
+    public Player(Point startPosition) {
         this.position = new Point(startPosition.getX(), startPosition.getY());
         this.velocity = new Vector2D(0, 0);
-        this.bulletFactory = bulletFactory;
-
         this.shipBoundingBox = new Polygon(
                 GameConfig.PLAYER_SHIP_X_POINTS,
                 GameConfig.PLAYER_SHIP_Y_POINTS,
@@ -49,11 +36,9 @@ public class Player extends GameObject implements Observable {
 
     @Override
     public void update(double deltaTime) {
-        // Handle rotation based on input booleans
         double rotationSpeed = 4.0;
         if (rotateLeft) angle -= rotationSpeed * deltaTime;
         if (rotateRight) angle += rotationSpeed * deltaTime;
-
         super.update(deltaTime);
         if (currentShootCooldown > 0) currentShootCooldown -= deltaTime;
     }
@@ -66,7 +51,7 @@ public class Player extends GameObject implements Observable {
 
         if (move) {
             int[] flameX = {-4, 0, 4};
-            int[] flameY = {12, 18 + (int)(Math.random() * 6), 12};
+            int[] flameY = {12, 18 + (int) (Math.random() * 6), 12};
             g.setColor(Color.BLUE);
             g.fillPolygon(flameX, flameY, 3);
         }
@@ -89,54 +74,23 @@ public class Player extends GameObject implements Observable {
     public void onCollision(GameObject other) {
         if (other instanceof Asteroid) {
             lives--;
-            notifyObservers();
-            if (lives <= 0) {
+            notifyObservers(Event.LOSE_LIFE);
+            if (lives <= 0){
                 destroy();
+                notifyObservers(Event.PLAYER_DIED);
             }
         }
     }
 
-    public GameObject shoot() {
-        if (!canShoot()) return null;
-        currentShootCooldown = maxShootCooldown;
-
-        // Adjust heading so bullet comes out of the front
-        double heading = angle - headingOffset;
-        Vector2D fireDirection = new Vector2D(Math.cos(heading), Math.sin(heading));
-
-        double spawnOffset = 25;
-        double spawnX = position.getX() + Math.cos(heading) * spawnOffset;
-        double spawnY = position.getY() + Math.sin(heading) * spawnOffset;
-
-        return bulletFactory.createGameObject(spawnX, spawnY, fireDirection);
-    }
-
-    private boolean canShoot() {
-        return currentShootCooldown <= 0;
-    }
-
-    @Override
-    public void addObserver(Observer observer) {
-        if (!observers.contains(observer)) {
-            observers.add(observer);
+    public void shoot() {
+        if (canShoot()) {
+            currentShootCooldown = maxShootCooldown;
+            notifyObservers(Event.SHOT_FIRED);
         }
     }
 
-    @Override
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
-
-    public void loseLife() {
-        this.lives--;
-        notifyObservers();
-    }
-
-    @Override
-    public void notifyObservers() {
-        for (Observer observer : observers) {
-            observer.update(this);
-        }
+    public double getHeadingAngle() {
+        return angle - headingOffset;
     }
 
     public void reset() {
@@ -148,13 +102,15 @@ public class Player extends GameObject implements Observable {
         notifyObservers();
     }
 
-    public void setMove(boolean on) { move = on; }
-    public void setRotateLeft(boolean on) { rotateLeft = on; }
+    private boolean canShoot()          { return currentShootCooldown <= 0; }
+    public void setMove(boolean on)     { move = on; }
+    public void setRotateLeft(boolean on)  { rotateLeft = on; }
     public void setRotateRight(boolean on) { rotateRight = on; }
-    public int getLives() { return lives; }
-    public double getAngle() { return angle; }
-    public void setAngle(double angle) { this.angle = angle; }
-    public boolean isMoving() { return move; }
-    public boolean isRotatingLeft() { return rotateLeft; }
-    public boolean isRotatingRight() { return rotateRight; }
+    public int getLives()               { return lives; }
+    public double getAngle()            { return angle; }
+    public void setAngle(double angle)  { this.angle = angle; }
+    public boolean isMoving()           { return move; }
+    public boolean isRotatingLeft()     { return rotateLeft; }
+    public boolean isRotatingRight()    { return rotateRight; }
+
 }

@@ -12,11 +12,6 @@ import java.util.Map;
 public class InputHandler implements KeyListener {
 
     private final Map<Integer, Command> commands = new HashMap<>();
-    private final Game game;
-
-    public InputHandler(Game game) {
-        this.game = game;
-    }
 
     public void bind(int keyCode, Command command) {
         commands.put(keyCode, command);
@@ -25,21 +20,20 @@ public class InputHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         Command command = commands.get(e.getKeyCode());
-        if (command != null) {
-            command.execute();
-        }
-        game.handleKeyPressed(e.getKeyCode());
+        if (command != null) command.execute();
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         Command command = commands.get(e.getKeyCode());
-        if (command != null) {
-            command.stop();
-        }
-        game.handleKeyReleased(e.getKeyCode());
+        if (command != null) command.stop();
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {
+    }
+
+    public void clearBindings() {
+        commands.clear();
+    }
 }

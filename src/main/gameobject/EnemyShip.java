@@ -14,8 +14,8 @@ public class EnemyShip extends GameObject {
     private double lastShotTime = 0;
     private static final double FIRE_RATE = 2.0;
 
-    public EnemyShip(double posX, double posY, Vector2D velocity) {
-        this.position = new Point(posX, posY);
+    public EnemyShip(Point position, Vector2D velocity) {
+        this.position = position;
         this.velocity = velocity;
 
         int[] xPoints = {-20, -10, -5, 5, 10, 20, 10, -10};

@@ -17,7 +17,7 @@ public class Bullet extends GameObject {
     private final double baseSpeed = GameConfig.BULLET_SPEED;
     public Bullet(Point startPos, Vector2D direction) {
         this.position = new Point(startPos.getX(), startPos.getY());
-        this.velocity = velocity;
+        this.velocity = direction;
         this.movementStrategy = new DespawningMovementStrategy(
                 new LinearMovement(),
                0

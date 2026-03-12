@@ -1,7 +1,6 @@
 package main.observer;
 
-
-import main.gameobject.asteroids.Asteroid;
+import main.conf.GameConfig;
 
 import java.awt.*;
 
@@ -10,14 +9,15 @@ public class ScoreObserver implements UiObserver {
 
 
     @Override
-    public void update(Observable subject) {
-        if (subject instanceof Asteroid) {
+    public void onEvent(Observable subject, Event event) {
+        if (event == Event.ASTEROID_DESTROYED) {
             scoreCounter++;
         }
     }
 
     @Override
     public void draw(Graphics g) {
-        g.drawString("Score: " + scoreCounter, 20, 20);
+        g.setColor(Color.WHITE);
+        g.drawString("Score: " + scoreCounter, GameConfig.SCREEN_WIDTH/2, GameConfig.SCREEN_HEIGHT -10);
     }
 }

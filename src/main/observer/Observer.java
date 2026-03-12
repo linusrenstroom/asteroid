@@ -1,5 +1,6 @@
 package main.observer;
 
 public interface Observer {
-    void update(Observable subject);
+    default void onEvent(Observable subject) {};
+    default void onEvent(Observable subject, Event event) {};
 }

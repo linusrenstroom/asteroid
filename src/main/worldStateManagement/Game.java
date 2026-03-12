@@ -1,8 +1,9 @@
-// Game.java — passes this::setGameState as the changeState callback
 package main.worldStateManagement;
 
+import main.factory.BulletFactory;
 import main.gameobject.Player;
-import main.state.GameState;
+import main.state.*;
+import main.util.InputHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,13 +13,16 @@ public class Game extends JPanel {
     private final Hud hud;
     private final GameLoop gameLoop;
     private GameState gameState;
+    private InputHandler inputHandler;
 
-    public Game(Player player, SpawnManager spawnManager, GameState initialState) {
-        this.world = new World(player, spawnManager);
-        this.hud = new Hud(player);
+    public Game(Player player, SpawnManager spawnManager, GameState initialState, BulletFactory bulletFactory) {
+        this.world = new World(player, spawnManager, bulletFactory);
+        this.hud = new Hud(player, world);
         this.gameState = initialState;
         this.gameLoop = new GameLoop(this::update, this::render);
-
+        inputHandler = new InputHandler();
+        rebindKeys();
+        addKeyListener(inputHandler);
         setFocusable(true);
         setBackground(Color.DARK_GRAY);
         gameLoop.start();
@@ -43,16 +47,14 @@ public class Game extends JPanel {
         hud.draw(g2);
     }
 
-    public void handleKeyPressed(int keyCode) {
-        gameState.keyPressed(keyCode, world, this::setGameState);
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+        rebindKeys();
     }
 
-    public void handleKeyReleased(int keyCode) {
-        gameState.keyReleased(keyCode, world, this::setGameState);
+    private void rebindKeys() {
+        inputHandler.clearBindings();
+        gameState.getKeyBindings(world, this::setGameState)
+                .forEach(inputHandler::bind);
     }
-
-    public void setGameState(GameState gameState) { this.gameState = gameState; }
-    public GameState getGameState()               { return gameState; }
-    public World getWorld()                       { return world; }
-    public Hud getHud()                           { return hud; }
 }

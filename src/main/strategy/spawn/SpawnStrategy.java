@@ -6,4 +6,4 @@ import main.gameobject.GameObject;
 import java.util.List;
 
 public interface SpawnStrategy {
-    void spawn(List<GameObject> objects, GameObjectFactory factory, double gameTime);}
+    List<GameObject> spawn(GameObjectFactory factory, double gameTime);}

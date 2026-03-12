@@ -5,9 +5,10 @@ import main.gameobject.asteroids.Asteroid;
 
 import main.Vector2D;
 import main.factory.GameObjectFactory;
+import main.util.Point;
 
 
 public interface AsteroidFactory extends GameObjectFactory {
     @Override
-    Asteroid createGameObject(double posX, double posY, Vector2D velocity);
+    Asteroid createGameObject(Point position, Vector2D velocity);
 }

@@ -9,10 +9,9 @@ public class LifeObserver implements UiObserver {
     private int lives = 3;
 
     @Override
-    public void update(Observable subject) {
-        if (subject instanceof Player) {
-            Player player = (Player) subject;
-            this.lives = player.getLives();
+    public void onEvent(Observable subject, Event event) {
+        if (event == Event.LOSE_LIFE && subject instanceof Player player) {
+            lives = player.getLives();
         }
     }
 

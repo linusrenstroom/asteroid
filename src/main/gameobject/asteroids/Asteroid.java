@@ -5,6 +5,7 @@ import main.conf.GameConfig;
 import main.gameobject.Bullet;
 import main.gameobject.GameObject;
 import main.gameobject.Player;
+import main.observer.Event;
 import main.util.Point;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -15,10 +16,10 @@ public abstract class Asteroid extends GameObject {
     protected double rotationAngle = 0;
     protected double rotationSpeed;
 
-    public Asteroid(Polygon shape, int radius, double x, double y, Vector2D velocity, double rotationSpeed) {
+    public Asteroid(Polygon shape, int radius, Point position, Vector2D velocity, double rotationSpeed) {
         this.shape = shape;
         this.radius = radius;
-        this.position = new Point(x, y);
+        this.position = position;
         this.velocity = velocity;
         this.rotationSpeed = rotationSpeed;
     }
@@ -66,6 +67,7 @@ public abstract class Asteroid extends GameObject {
         if (other instanceof Bullet) {
             this.destroy();
             other.destroy();
+            notifyObservers(Event.ASTEROID_DESTROYED);
         }
         if(other instanceof Player){
             this.destroy();

@@ -1,11 +1,15 @@
 // PausedState.java
 package main.state;
 
+import main.command.ChangeStateCommand;
+import main.command.Command;
 import main.conf.GameConfig;
 import main.worldStateManagement.World;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class PausedState implements GameState {
@@ -27,12 +31,16 @@ public class PausedState implements GameState {
     }
 
     @Override
-    public void keyPressed(int keyCode, World world, Consumer<GameState> changeState) {
-        if (keyCode == KeyEvent.VK_ESCAPE) {
-            changeState.accept(previousState);
-        }
+    public Map<Integer, Command> getKeyBindings(World world, Consumer<GameState> changeState) {
+        Map<Integer, Command> bindings = new HashMap<>();
+        bindings.put(KeyEvent.VK_ESCAPE, new ChangeStateCommand(
+                () -> previousState, changeState
+        ));
+        return bindings;
     }
 
-    @Override
-    public void keyReleased(int keyCode, World world, Consumer<GameState> changeState) {}
+    public GameState getPreviousState(){
+        return previousState;
+    }
+
 }

@@ -1,11 +1,16 @@
 // MenuState.java
 package main.state;
 
+import main.command.ChangeStateCommand;
+import main.command.Command;
+import main.command.QuitCommand;
 import main.conf.GameConfig;
 import main.worldStateManagement.World;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class MenuState implements GameState {
@@ -27,16 +32,10 @@ public class MenuState implements GameState {
     }
 
     @Override
-    public void keyPressed(int keyCode, World world, Consumer<GameState> changeState) {
-        if (keyCode == KeyEvent.VK_ENTER) {
-            world.reset();
-            changeState.accept(new RunningState());
-        }
-        if (keyCode == KeyEvent.VK_ESCAPE) {
-            System.exit(0);
-        }
+    public Map<Integer, Command> getKeyBindings(World world, Consumer<GameState> changeState) {
+        Map<Integer, Command> bindings = new HashMap<>();
+        bindings.put(KeyEvent.VK_ENTER, new ChangeStateCommand(RunningState::new, changeState));
+        bindings.put(KeyEvent.VK_ESCAPE, new QuitCommand());
+        return bindings;
     }
-
-    @Override
-    public void keyReleased(int keyCode, World world, Consumer<GameState> changeState) {}
 }

@@ -3,11 +3,13 @@ package main.worldStateManagement;
 import main.conf.GameConfig;
 import main.factory.abstractFactory.*;
 import main.gameobject.GameObject;
+import main.observer.Observer;
 import main.strategy.spawn.LeftSideSpawnStrategy;
 import main.strategy.spawn.RightSideSpawnStrategy;
 import main.strategy.spawn.SpawnStrategy;
 import main.strategy.spawn.TopSideSpawnStrategy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -15,6 +17,7 @@ public class SpawnManager {
     private final SpawnStrategy[] strategies;
     private final AsteroidFactory[] asteroidFactories;
     private final Random random = new Random();
+    private final List<Observer> asteroidObservers = new ArrayList<>();
 
     private double accumulatedTime = 0;
     private double totalGameTime = 0;
@@ -43,7 +46,15 @@ public class SpawnManager {
             SpawnStrategy strategy = strategies[random.nextInt(strategies.length)];
             AsteroidFactory factory = asteroidFactories[random.nextInt(asteroidFactories.length)];
 
-            strategy.spawn(objects, factory, totalGameTime);
+            List<GameObject> spawned = strategy.spawn(factory, totalGameTime);
+            spawned.forEach(obj -> {
+                asteroidObservers.forEach(obj::addObserver);
+                objects.add(obj);
+            });
+
         }
+    }
+    public void addAsteroidObserver(Observer observer) {
+        asteroidObservers.add(observer);
     }
 }
