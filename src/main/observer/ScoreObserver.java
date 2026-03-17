@@ -12,6 +12,8 @@ public class ScoreObserver implements UiObserver {
     public void onEvent(Observable subject, Event event) {
         if (event == Event.ASTEROID_DESTROYED) {
             scoreCounter++;
+        }if(event == Event.PLAYER_DIED){
+            scoreCounter = 0;
         }
     }
 

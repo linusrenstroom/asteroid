@@ -13,6 +13,9 @@ public class LifeObserver implements UiObserver {
         if (event == Event.LOSE_LIFE && subject instanceof Player player) {
             lives = player.getLives();
         }
+        if (event == Event.PLAYER_DIED){
+            lives = 3;
+        }
     }
 
     @Override

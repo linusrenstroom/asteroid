@@ -30,6 +30,7 @@ public class Game extends JPanel {
 
     private void update(double deltaTime) {
         gameState.update(deltaTime, world, this::setGameState);
+
     }
 
     private void render() {
@@ -53,6 +54,7 @@ public class Game extends JPanel {
     }
 
     private void rebindKeys() {
+        inputHandler.stopAll();
         inputHandler.clearBindings();
         gameState.getKeyBindings(world, this::setGameState)
                 .forEach(inputHandler::bind);

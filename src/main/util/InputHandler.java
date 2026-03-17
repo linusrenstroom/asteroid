@@ -36,4 +36,8 @@ public class InputHandler implements KeyListener {
     public void clearBindings() {
         commands.clear();
     }
+
+    public void stopAll() {
+        commands.values().forEach(Command::stop);
+    }
 }

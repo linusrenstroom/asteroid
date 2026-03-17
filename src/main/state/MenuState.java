@@ -34,7 +34,9 @@ public class MenuState implements GameState {
     @Override
     public Map<Integer, Command> getKeyBindings(World world, Consumer<GameState> changeState) {
         Map<Integer, Command> bindings = new HashMap<>();
-        bindings.put(KeyEvent.VK_ENTER, new ChangeStateCommand(RunningState::new, changeState));
+        bindings.put(KeyEvent.VK_ENTER, new ChangeStateCommand(
+                () -> { world.reset(); return new RunningState(); }, changeState
+        ));
         bindings.put(KeyEvent.VK_ESCAPE, new QuitCommand());
         return bindings;
     }
