@@ -128,13 +128,7 @@ public class World implements Observer, WorldMediator {
     }
 
     public void addObserver(Observer observer) {
-
-    }
-
-    public void addGameObserver(Observer observer) {
         gameObservers.add(observer);
-        for (GameObject obj : objects) {
-            obj.addObserver(observer);
-        }
     }
+
 }

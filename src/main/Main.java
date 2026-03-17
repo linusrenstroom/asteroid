@@ -21,6 +21,9 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         game.requestFocusInWindow();
+        SoundManager soundManager = new SoundManager();
+        soundManager.playMusic("/assets/music.wav");
+        soundManager.setMusicVolume(-10.0f);
     }
 
     public static void main(String[] args) {

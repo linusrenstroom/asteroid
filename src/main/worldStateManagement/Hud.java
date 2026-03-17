@@ -3,6 +3,7 @@ package main.worldStateManagement;
 import main.gameobject.Player;
 import main.observer.LifeObserver;
 import main.observer.ScoreObserver;
+import main.observer.SoundObserver;
 import main.observer.UiObserver;
 
 import java.awt.*;
@@ -15,9 +16,11 @@ public class Hud {
     public Hud(Player player, World world) {
         LifeObserver lifeObserver = new LifeObserver();
         ScoreObserver scoreObserver = new ScoreObserver();
+        SoundObserver soundObserver = new SoundObserver();
 
         player.addObserver(lifeObserver);
-        world.addGameObserver(scoreObserver);
+        world.addObserver(soundObserver);
+        player.addObserver(scoreObserver);
 
         observers.add(lifeObserver);
         observers.add(scoreObserver);
