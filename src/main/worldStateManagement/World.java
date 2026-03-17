@@ -1,17 +1,19 @@
-// World.java — remove setGameState entirely, it doesn't belong here
 package main.worldStateManagement;
 
 import main.Vector2D;
 import main.conf.GameConfig;
 import main.factory.BulletFactory;
+import main.gameobject.EnemyShip;
 import main.gameobject.GameObject;
 import main.gameobject.Player;
 import main.gameobject.asteroids.Asteroid;
 import main.observer.Event;
 import main.observer.Observable;
 import main.observer.Observer;
+import main.observer.ScoreObserver;
+import main.util.Point;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,19 +23,26 @@ public class World implements Observer {
     private final Player player;
     private final SpawnManager spawnManager;
     private final BulletFactory bulletFactory;
+    private final List<Observer> observers = new ArrayList<>();
 
     public World(Player player, SpawnManager spawnManager, BulletFactory bulletFactory) {
         this.player = player;
         this.spawnManager = spawnManager;
-        this.bulletFactory = bulletFactory; // injected, not constructed here
+        this.bulletFactory = bulletFactory;
         objects.add(player);
         player.addObserver(this);
+        spawnManager.addObserver(this);
     }
 
     public void update(double deltaTime) {
         spawnManager.update(deltaTime, objects);
-        for (GameObject obj : objects) {
-            obj.update(deltaTime);
+        for (int i = 0; i < objects.size(); i++) {
+            GameObject obj = objects.get(i);
+            if (obj instanceof EnemyShip enemy) {
+                enemy.update(deltaTime, player);
+            } else {
+                obj.update(deltaTime);
+            }
         }
     }
 
@@ -57,6 +66,7 @@ public class World implements Observer {
 
     public void addObject(GameObject object) {
         objects.add(object);
+
     }
 
     public void draw(Graphics2D g2) {
@@ -80,23 +90,40 @@ public class World implements Observer {
         switch (event) {
             case SHOT_FIRED -> {
                 if (subject instanceof Player p) {
-                    double angle = p.getHeadingAngle();
-                    Vector2D direction = new Vector2D(
-                            Math.cos(angle) * GameConfig.BULLET_SPEED,
-                            Math.sin(angle) * GameConfig.BULLET_SPEED
-                    );
-                    addObject(bulletFactory.createGameObject(p.getPosition(), direction));
+                    handlePlayerShot(p);
                 }
             }
-            case PLAYER_DIED -> {}
+            case PLAYER_DIED -> {
+            }
+            case ENEMY_SHOT_FIRED -> {
+                if (subject instanceof EnemyShip e) {
+                    handleEnemyShot(e);
+                }
+            }
         }
     }
+    private void handleEnemyShot(EnemyShip e) {
+        double angle = e.getAngle() - Math.toRadians(90);
+        double dx = Math.cos(angle);
+        double dy = Math.sin(angle);
+        double offsetDistance = 20;
 
-    public void addAsteroidObserver(Observer observer) {
-        objects.stream()
-                .filter(o -> o instanceof Asteroid)
-                .forEach(a -> a.addObserver(observer));
+        Vector2D direction = new Vector2D(dx * GameConfig.BULLET_SPEED, dy * GameConfig.BULLET_SPEED);
+        Point spawnPos = new Point(e.getPosition().getX() + dx * offsetDistance, e.getPosition().getY() + dy * offsetDistance);
 
-        spawnManager.addAsteroidObserver(observer);
+        addObject(bulletFactory.createGameObject(spawnPos, direction));
+    }
+    private void handlePlayerShot(Player p) {
+        double angle = p.getHeadingAngle();
+        double offsetDistance = 20;
+
+        Vector2D direction = new Vector2D(Math.cos(angle) * GameConfig.BULLET_SPEED, Math.sin(angle) * GameConfig.BULLET_SPEED);
+        Point spawnPos = new Point(p.getPosition().getX() + Math.cos(angle) * offsetDistance, p.getPosition().getY() + Math.sin(angle) * offsetDistance);
+
+        addObject(bulletFactory.createGameObject(spawnPos, direction));
+    }
+
+    public void addObserver(Observer observer) {
+
     }
 }

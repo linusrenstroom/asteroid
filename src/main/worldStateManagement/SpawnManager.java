@@ -1,6 +1,8 @@
 package main.worldStateManagement;
 
+import main.Vector2D;
 import main.conf.GameConfig;
+import main.factory.EnemyShipFactory;
 import main.factory.abstractFactory.*;
 import main.gameobject.GameObject;
 import main.observer.Observer;
@@ -8,6 +10,7 @@ import main.strategy.spawn.LeftSideSpawnStrategy;
 import main.strategy.spawn.RightSideSpawnStrategy;
 import main.strategy.spawn.SpawnStrategy;
 import main.strategy.spawn.TopSideSpawnStrategy;
+import main.util.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +20,13 @@ public class SpawnManager {
     private final SpawnStrategy[] strategies;
     private final AsteroidFactory[] asteroidFactories;
     private final Random random = new Random();
-    private final List<Observer> asteroidObservers = new ArrayList<>();
+    private final List<Observer> observers = new ArrayList<>();
+    private final EnemyShipFactory shipFactory;
 
     private double accumulatedTime = 0;
     private double totalGameTime = 0;
+    private double enemySpawnTimer = 0;
+    private final double enemySpawnInterval = 10.0;
 
     public SpawnManager() {
         this.asteroidFactories = new AsteroidFactory[] {
@@ -28,7 +34,7 @@ public class SpawnManager {
                 new LargeAsteroidFactory(),
                 new StandardAsteroidFactory()
         };
-
+        this.shipFactory = new EnemyShipFactory();
         this.strategies = new SpawnStrategy[] {
                 new LeftSideSpawnStrategy(),
                 new RightSideSpawnStrategy(),
@@ -39,22 +45,38 @@ public class SpawnManager {
     public void update(double deltaTime, List<GameObject> objects) {
         totalGameTime += deltaTime;
         accumulatedTime += deltaTime;
+        enemySpawnTimer += deltaTime;
 
         if (accumulatedTime >= GameConfig.BASE_SPAWN_RATE_SECONDS) {
             accumulatedTime = 0;
+            spawnAsteroid(objects);
+        }
 
-            SpawnStrategy strategy = strategies[random.nextInt(strategies.length)];
-            AsteroidFactory factory = asteroidFactories[random.nextInt(asteroidFactories.length)];
-
-            List<GameObject> spawned = strategy.spawn(factory, totalGameTime);
-            spawned.forEach(obj -> {
-                asteroidObservers.forEach(obj::addObserver);
-                objects.add(obj);
-            });
-
+        if (enemySpawnTimer >= enemySpawnInterval) {
+            enemySpawnTimer = 0;
+            spawnEnemyShip(objects);
         }
     }
-    public void addAsteroidObserver(Observer observer) {
-        asteroidObservers.add(observer);
+
+    private void spawnAsteroid(List<GameObject> objects) {
+        SpawnStrategy strategy = strategies[random.nextInt(strategies.length)];
+        AsteroidFactory factory = asteroidFactories[random.nextInt(asteroidFactories.length)];
+
+        List<GameObject> spawned = strategy.spawn(factory, totalGameTime);
+        for (GameObject obj : spawned) {
+            objects.add(obj);
+        }
     }
+
+    private void spawnEnemyShip(List<GameObject> objects) {
+        Point spawnPos = new Point(0, random.nextInt(GameConfig.SCREEN_HEIGHT));
+        Vector2D velocity = new Vector2D(20, 20);
+        GameObject ship = shipFactory.createGameObject(spawnPos, velocity);
+        observers.forEach(ship::addObserver);
+        objects.add(ship);
+    }
+
+   public void addObserver(Observer observer) {
+        observers.add(observer);
+   }
 }

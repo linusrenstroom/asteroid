@@ -13,6 +13,10 @@ public class ScoreObserver implements UiObserver {
         if (event == Event.ASTEROID_DESTROYED) {
             scoreCounter++;
         }
+        if(event == Event.PLAYER_DIED){
+            scoreCounter =0;
+        }
+
     }
 
     @Override
