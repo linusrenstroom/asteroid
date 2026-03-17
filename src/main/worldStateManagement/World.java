@@ -18,31 +18,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class World implements Observer {
+public class World implements Observer, WorldMediator {
     private final List<GameObject> objects = new ArrayList<>();
     private final Player player;
     private final SpawnManager spawnManager;
     private final BulletFactory bulletFactory;
-    private final List<Observer> observers = new ArrayList<>();
+    private final List<Observer> gameObservers = new ArrayList<>();
 
     public World(Player player, SpawnManager spawnManager, BulletFactory bulletFactory) {
         this.player = player;
         this.spawnManager = spawnManager;
         this.bulletFactory = bulletFactory;
-        objects.add(player);
+        addObject(player);
         player.addObserver(this);
         spawnManager.addObserver(this);
     }
 
     public void update(double deltaTime) {
-        spawnManager.update(deltaTime, objects);
+        spawnManager.update(deltaTime, this);
         for (int i = 0; i < objects.size(); i++) {
             GameObject obj = objects.get(i);
-            if (obj instanceof EnemyShip enemy) {
-                enemy.update(deltaTime, player);
-            } else {
-                obj.update(deltaTime);
-            }
+            obj.update(deltaTime, this);
         }
     }
 
@@ -66,7 +62,9 @@ public class World implements Observer {
 
     public void addObject(GameObject object) {
         objects.add(object);
-
+        for (Observer o : gameObservers) {
+            object.addObserver(o);
+        }
     }
 
     public void draw(Graphics2D g2) {
@@ -78,7 +76,7 @@ public class World implements Observer {
     public void reset() {
         objects.clear();
         player.reset();
-        objects.add(player);
+        addObject(player);
     }
 
     public Player getPlayer() {
@@ -108,16 +106,16 @@ public class World implements Observer {
         double dy = Math.sin(angle);
         double offsetDistance = 20;
 
-        Vector2D direction = new Vector2D(dx * GameConfig.BULLET_SPEED, dy * GameConfig.BULLET_SPEED);
+        Vector2D direction = new Vector2D(dx * GameConfig.ENEMY_BULLET_SPEED, dy * GameConfig.ENEMY_BULLET_SPEED);
         Point spawnPos = new Point(e.getPosition().getX() + dx * offsetDistance, e.getPosition().getY() + dy * offsetDistance);
 
-        addObject(bulletFactory.createGameObject(spawnPos, direction));
+        addObject(bulletFactory.createEnemyBullet(spawnPos, direction));
     }
     private void handlePlayerShot(Player p) {
         double angle = p.getHeadingAngle();
         double offsetDistance = 20;
 
-        Vector2D direction = new Vector2D(Math.cos(angle) * GameConfig.BULLET_SPEED, Math.sin(angle) * GameConfig.BULLET_SPEED);
+        Vector2D direction = new Vector2D(Math.cos(angle) * GameConfig.PLAYER_BULLET_SPEED, Math.sin(angle) * GameConfig.PLAYER_BULLET_SPEED);
         Point spawnPos = new Point(p.getPosition().getX() + Math.cos(angle) * offsetDistance, p.getPosition().getY() + Math.sin(angle) * offsetDistance);
 
         addObject(bulletFactory.createGameObject(spawnPos, direction));
@@ -125,5 +123,12 @@ public class World implements Observer {
 
     public void addObserver(Observer observer) {
 
+    }
+
+    public void addGameObserver(Observer observer) {
+        gameObservers.add(observer);
+        for (GameObject obj : objects) {
+            obj.addObserver(observer);
+        }
     }
 }

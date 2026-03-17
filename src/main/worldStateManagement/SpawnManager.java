@@ -42,38 +42,39 @@ public class SpawnManager {
         };
     }
 
-    public void update(double deltaTime, List<GameObject> objects) {
+    public void update(double deltaTime, World world) {
         totalGameTime += deltaTime;
         accumulatedTime += deltaTime;
         enemySpawnTimer += deltaTime;
 
         if (accumulatedTime >= GameConfig.BASE_SPAWN_RATE_SECONDS) {
             accumulatedTime = 0;
-            spawnAsteroid(objects);
+            spawnAsteroid(world);
         }
 
         if (enemySpawnTimer >= enemySpawnInterval) {
             enemySpawnTimer = 0;
-            spawnEnemyShip(objects);
+            spawnEnemyShip(world);
         }
     }
 
-    private void spawnAsteroid(List<GameObject> objects) {
+    private void spawnAsteroid(World world) {
         SpawnStrategy strategy = strategies[random.nextInt(strategies.length)];
         AsteroidFactory factory = asteroidFactories[random.nextInt(asteroidFactories.length)];
 
         List<GameObject> spawned = strategy.spawn(factory, totalGameTime);
         for (GameObject obj : spawned) {
-            objects.add(obj);
+            observers.forEach(obj::addObserver);
+            world.addObject(obj);
         }
     }
 
-    private void spawnEnemyShip(List<GameObject> objects) {
+    private void spawnEnemyShip(World world) {
         Point spawnPos = new Point(0, random.nextInt(GameConfig.SCREEN_HEIGHT));
         Vector2D velocity = new Vector2D(20, 20);
         GameObject ship = shipFactory.createGameObject(spawnPos, velocity);
         observers.forEach(ship::addObserver);
-        objects.add(ship);
+        world.addObject(ship);
     }
 
    public void addObserver(Observer observer) {

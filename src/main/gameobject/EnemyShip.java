@@ -6,6 +6,7 @@ import main.observer.Event;
 import main.strategy.movement.LinearMovement;
 import main.strategy.movement.decorator.WrappingMovementStrategy;
 import main.util.Point;
+import main.worldStateManagement.WorldMediator;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
@@ -30,13 +31,15 @@ public class EnemyShip extends GameObject {
         this.movementStrategy = new WrappingMovementStrategy(new LinearMovement(), 0);
     }
 
-    public void update(double deltaTime, Player player) {
+    @Override
+    public void update(double deltaTime, WorldMediator world) {
         aliveTime += deltaTime;
         lastShotTime += deltaTime;
 
-        super.update(deltaTime);
+        super.update(deltaTime, world);
         position.setY(position.getY() + Math.sin(aliveTime * 4.0) * 0.8);
 
+        Player player = world.getPlayer();
         if (player != null && !player.isDead()) {
             double dx = player.getPosition().getX() - position.getX();
             double dy = player.getPosition().getY() - position.getY();
