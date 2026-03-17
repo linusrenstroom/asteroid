@@ -25,9 +25,6 @@ public class ScoreObserver implements UiObserver {
             highScore = Math.max(highScore, scoreCounter);
             scoreCounter = 0;
         }
-        if(event == Event.PLAYER_DIED){
-            scoreCounter =0;
-        }
 
     }
 

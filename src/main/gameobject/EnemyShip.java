@@ -14,7 +14,7 @@ public class EnemyShip extends GameObject {
     private final Polygon shape;
     private double aliveTime = 0;
     private double lastShotTime = 0;
-    private static final double FIRE_RATE = 2.0;
+    private static final double FIRE_RATE = 0.5;
     private double angle = 0;
 
     private final Color primaryColor = new Color(20, 20, 25);

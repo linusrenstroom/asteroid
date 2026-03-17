@@ -20,6 +20,7 @@ public class Hud {
 
         player.addObserver(lifeObserver);
         world.addObserver(soundObserver);
+        world.addObserver(scoreObserver);
         player.addObserver(scoreObserver);
 
         observers.add(lifeObserver);
