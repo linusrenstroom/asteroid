@@ -70,14 +70,16 @@ public class SpawnManager {
     }
 
     private void spawnEnemyShip(World world) {
-        Point spawnPos = new Point(0, random.nextInt(GameConfig.SCREEN_HEIGHT));
-        Vector2D velocity = new Vector2D(20, 20);
-        GameObject ship = shipFactory.createGameObject(spawnPos, velocity);
-        observers.forEach(ship::addObserver);
-        world.addObject(ship);
+        SpawnStrategy strategy = strategies[random.nextInt(strategies.length)];
+
+        List<GameObject> spawned = strategy.spawn(shipFactory, totalGameTime);
+        for (GameObject ship : spawned) {
+            observers.forEach(ship::addObserver);
+            world.addObject(ship);
+        }
     }
 
-   public void addObserver(Observer observer) {
+    public void addObserver(Observer observer) {
         observers.add(observer);
-   }
+    }
 }

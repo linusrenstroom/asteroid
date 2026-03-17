@@ -33,15 +33,22 @@ public abstract class GameObject extends Observable {
 
     public abstract void draw(Graphics2D g);
 
-    public void onCollision(GameObject other) {
-        System.out.println("Collision Detected: " + other.getClass().getName() + " " + this.getClass().getName());
-    }
+    public void onCollision(GameObject other) {}
 
     public abstract Shape getBounds();
 
     public boolean collidesWith(GameObject other) {
-        Area a = new Area(this.getBounds());
-        a.intersect(new Area(other.getBounds()));
+
+        Shape s1 = this.getBounds();
+        Shape s2 = other.getBounds();
+
+        if (s1 == null || s2 == null) {
+            return false;
+        }
+
+        Area a = new Area(s1);
+        a.intersect(new Area(s2));
+
         return !a.isEmpty();
     }
 

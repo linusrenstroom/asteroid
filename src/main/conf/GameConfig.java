@@ -37,9 +37,9 @@ public class GameConfig {
     public static final double SPAWN_TARGET_X_RANGE_FACTOR = 0.25;
     public static final double SPAWN_TARGET_Y_BASE_FACTOR = 0.25;
     public static final double SPAWN_TARGET_Y_RANGE_FACTOR = 0.5;
-    public static final double SPAWN_ASTEROID_BASE_SPEED = 100.0;
+    public static final double SPAWN_ASTEROID_BASE_SPEED = 50.0;
     public static final double SPAWN_ASTEROID_SPEED_INCREASE_PER_SECOND = 2.0;
-    public static final double BASE_SPAWN_RATE_SECONDS = 1.0;
+    public static final double BASE_SPAWN_RATE_SECONDS = 2.0;
 
     public static final int PAUSED_OVERLAY_ALPHA = 128;
     public static final String PAUSED_TEXT = "PAUSAT";

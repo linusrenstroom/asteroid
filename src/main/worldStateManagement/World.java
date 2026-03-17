@@ -5,8 +5,10 @@ import main.Vector2D;
 import main.conf.GameConfig;
 import main.factory.BulletFactory;
 import main.gameobject.EnemyShip;
+import main.gameobject.Explosion;
 import main.gameobject.GameObject;
 import main.gameobject.Player;
+import main.gameobject.asteroids.Asteroid;
 import main.observer.Event;
 import main.observer.Observable;
 import main.observer.Observer;
@@ -95,6 +97,11 @@ public class World implements Observer, WorldMediator {
             case ENEMY_SHOT_FIRED -> {
                 if (subject instanceof EnemyShip e) {
                     handleEnemyShot(e);
+                }
+            }
+            case ASTEROID_DESTROYED -> {
+                if (subject instanceof Asteroid a) {
+                    addObject(new Explosion(new Point(a.getPosition().getX(), a.getPosition().getY())));
                 }
             }
         }

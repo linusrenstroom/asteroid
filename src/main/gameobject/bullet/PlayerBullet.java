@@ -9,7 +9,7 @@ public class PlayerBullet extends Bullet {
 
     public PlayerBullet(Point startPos, Vector2D direction) {
         super(startPos, direction);
-        this.setColor(Color.RED);
+        this.setColor(Color.GREEN);
 
     }
 

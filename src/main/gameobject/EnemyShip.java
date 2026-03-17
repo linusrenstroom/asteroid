@@ -37,8 +37,6 @@ public class EnemyShip extends GameObject {
         lastShotTime += deltaTime;
 
         super.update(deltaTime, world);
-        position.setY(position.getY() + Math.sin(aliveTime * 4.0) * 0.8);
-
         Player player = world.getPlayer();
         if (player != null && !player.isDead()) {
             double dx = player.getPosition().getX() - position.getX();

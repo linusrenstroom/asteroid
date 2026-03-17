@@ -13,14 +13,14 @@ import java.awt.geom.Ellipse2D;
 public abstract class Bullet extends GameObject {
 
     private final int radius = GameConfig.BULLET_RADIUS;
-    private Color color;
+    private Color color = Color.WHITE;
 
     public Bullet(Point startPos, Vector2D direction) {
         this.position = new Point(startPos.getX(), startPos.getY());
         this.velocity = direction;
         this.movementStrategy = new DespawningMovementStrategy(
                 new LinearMovement(),
-               0
+                0
         );
     }
 
@@ -31,8 +31,21 @@ public abstract class Bullet extends GameObject {
 
     @Override
     public void draw(Graphics2D g) {
-        g.setColor(color);
-        g.fillOval((int)(position.getX() - radius), (int)(position.getY() - radius), radius * 2, radius * 2);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.translate(position.getX(), position.getY());
+        double angle = Math.atan2(velocity.y, velocity.x);
+        g2.rotate(angle);
+        int length = 15;
+        int thickness = 3;
+        g2.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 100));
+        g2.setStroke(new BasicStroke(thickness + 2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2.drawLine(-length, 0, 0, 0);
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(thickness - 1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2.drawLine(-length, 0, 0, 0);
+
+        g2.dispose();
     }
 
     @Override

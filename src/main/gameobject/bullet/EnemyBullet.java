@@ -12,7 +12,7 @@ public class EnemyBullet extends Bullet {
 
     public EnemyBullet(Point startPos, Vector2D direction) {
         super(startPos, direction);
-        setColor(Color.GREEN);
+        setColor(Color.RED);
     }
     @Override
     public void onCollision(GameObject other) {
