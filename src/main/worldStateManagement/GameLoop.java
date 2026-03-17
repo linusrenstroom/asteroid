@@ -1,12 +1,13 @@
 package main.worldStateManagement;
 
 import main.conf.GameConfig;
+import main.observer.Observable;
 
 
 import javax.swing.*;
 import java.util.function.DoubleConsumer;
 
-public class GameLoop {
+public class GameLoop extends Observable {
     private final Timer timer;
     private long lastTime;
     private final DoubleConsumer onUpdate;
