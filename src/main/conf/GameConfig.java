@@ -19,9 +19,9 @@ public class GameConfig {
     public static final double PLAYER_BULLET_SPEED = 300.0;
     public static final double ENEMY_BULLET_SPEED = 200.0;
     public static final double PLAYER_HEADING_OFFSET_RADIANS = Math.PI / 2.0;
-    public static final int[] PLAYER_SHIP_X_POINTS = {0, -10, 10};
-    public static final int[] PLAYER_SHIP_Y_POINTS = {-15, 10, 10};
-    public static final int PLAYER_SHIP_POINT_COUNT = 3;
+    public static final int[] PLAYER_SHIP_X_POINTS = { 0, -4, -12, -3,  0,  3, 12,  4};
+    public static final int[] PLAYER_SHIP_Y_POINTS = {-18, -6,  12, 6,  10,  6, 12, -6};
+    public static final int PLAYER_SHIP_POINT_COUNT = 8;
 
     public static final int BULLET_RADIUS = 3;
 

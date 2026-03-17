@@ -1,7 +1,7 @@
 package main.gameobject;
 
 import main.Vector2D;
-import main.conf.GameConfig;
+import main.gameobject.bullet.Bullet;
 import main.observer.Event;
 import main.strategy.movement.LinearMovement;
 import main.strategy.movement.decorator.WrappingMovementStrategy;

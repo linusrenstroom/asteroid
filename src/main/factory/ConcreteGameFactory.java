@@ -1,6 +1,7 @@
 package main.factory;
 
 import main.conf.GameConfig;
+import main.factory.BulletFactory;
 import main.gameobject.Player;
 import main.state.MenuState;
 import main.util.Point;

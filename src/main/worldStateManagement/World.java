@@ -6,11 +6,9 @@ import main.factory.BulletFactory;
 import main.gameobject.EnemyShip;
 import main.gameobject.GameObject;
 import main.gameobject.Player;
-import main.gameobject.asteroids.Asteroid;
 import main.observer.Event;
 import main.observer.Observable;
 import main.observer.Observer;
-import main.observer.ScoreObserver;
 import main.util.Point;
 
 import java.awt.Graphics2D;
