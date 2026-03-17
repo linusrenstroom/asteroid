@@ -27,7 +27,7 @@ public class LifeObserver implements UiObserver {
         int heartHeight = 20;
         int spacing = 5;
         int x = 20;
-        int y = 20;
+        int y = 50;
 
         for (int i = 0; i < lives; i++) {
             drawHeart(g2, x + i * (heartWidth + spacing), y, heartWidth, heartHeight);

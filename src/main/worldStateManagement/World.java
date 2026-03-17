@@ -57,6 +57,7 @@ public class World implements Observer {
 
     public void addObject(GameObject object) {
         objects.add(object);
+        object.addObserver(this);
     }
 
     public void draw(Graphics2D g2) {
