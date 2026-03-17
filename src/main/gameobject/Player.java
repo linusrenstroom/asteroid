@@ -2,6 +2,7 @@ package main.gameobject;
 
 import main.Vector2D;
 import main.conf.GameConfig;
+import main.gameobject.bullet.EnemyBullet;
 import main.observer.Event;
 import main.strategy.movement.PlayerMovement;
 import main.strategy.movement.decorator.WrappingMovementStrategy;
@@ -72,7 +73,7 @@ public class Player extends GameObject {
 
     @Override
     public void onCollision(GameObject other) {
-        if (other instanceof Asteroid) {
+        if (other instanceof Asteroid|| other instanceof EnemyBullet) {
             lives--;
             notifyObservers(Event.LOSE_LIFE);
             if (lives <= 0){

@@ -4,6 +4,7 @@ import main.Vector2D;
 import main.observer.Observable;
 import main.strategy.movement.MovementStrategy;
 import main.util.Point;
+import main.worldStateManagement.WorldMediator;
 import java.awt.Shape;
 import java.awt.Graphics2D;
 import java.awt.geom.Area;
@@ -20,6 +21,10 @@ public abstract class GameObject extends Observable {
         if(movementStrategy != null){
             movementStrategy.move(this, deltaTime);
         }
+    }
+
+    public void update(double deltaTime, WorldMediator world) {
+        update(deltaTime);
     }
 
     public boolean isDead() { return dead; }

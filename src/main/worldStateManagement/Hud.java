@@ -17,8 +17,7 @@ public class Hud {
         ScoreObserver scoreObserver = new ScoreObserver();
 
         player.addObserver(lifeObserver);
-        world.addAsteroidObserver(scoreObserver);
-        player.addObserver(scoreObserver);
+        world.addGameObserver(scoreObserver);
 
         observers.add(lifeObserver);
         observers.add(scoreObserver);

@@ -10,5 +10,5 @@ import main.util.Point;
 
 public interface AsteroidFactory extends GameObjectFactory {
     @Override
-    Asteroid createGameObject(Point position, Vector2D velocity);
+    public Asteroid createGameObject(Point position, Vector2D velocity);
 }

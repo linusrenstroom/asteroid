@@ -2,9 +2,10 @@ package main.gameobject.asteroids;
 
 import main.Vector2D;
 import main.conf.GameConfig;
-import main.gameobject.Bullet;
+import main.gameobject.bullet.Bullet;
 import main.gameobject.GameObject;
 import main.gameobject.Player;
+import main.gameobject.bullet.PlayerBullet;
 import main.observer.Event;
 import main.util.Point;
 import java.awt.*;
@@ -64,7 +65,7 @@ public abstract class Asteroid extends GameObject {
 
     @Override
     public void onCollision(GameObject other) {
-        if (other instanceof Bullet) {
+        if (other instanceof PlayerBullet) {
             this.destroy();
             other.destroy();
             notifyObservers(Event.ASTEROID_DESTROYED);

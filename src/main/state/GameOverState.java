@@ -34,9 +34,7 @@ public class GameOverState implements GameState{
         bindings.put(KeyEvent.VK_ENTER, new ChangeStateCommand(
                 () -> { world.reset(); return new RunningState(); }, changeState
         ));
-        bindings.put(KeyEvent.VK_ESCAPE, new ChangeStateCommand(
-                MenuState::new, changeState
-        ));
+        bindings.put(KeyEvent.VK_ESCAPE, new ChangeStateCommand(MenuState::new, changeState));
         return bindings;
     }
 

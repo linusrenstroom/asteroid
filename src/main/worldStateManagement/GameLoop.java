@@ -28,7 +28,7 @@ public class GameLoop {
     }
 
     public void start() {
-        lastTime = System.nanoTime(); // reset on start to avoid huge first delta
+        lastTime = System.nanoTime();
         timer.start();
     }
 
