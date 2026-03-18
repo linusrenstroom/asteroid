@@ -24,7 +24,7 @@ public class RunningState implements GameState {
     }
 
     @Override
-    public void draw(Graphics2D g) {}
+    public void draw(Graphics2D g, World world) {}
 
     @Override
     public Map<Integer, Command> getKeyBindings(World world, Consumer<GameState> changeState) {

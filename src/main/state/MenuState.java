@@ -19,16 +19,39 @@ public class MenuState implements GameState {
     public void update(double deltaTime, World world, Consumer<GameState> changeState) {}
 
     @Override
-    public void draw(Graphics2D g) {
-        g.setColor(Color.BLACK);
+    public void draw(Graphics2D g, World world) {
+        g.setColor(new Color(5, 6, 12));
         g.fillRect(0, 0, GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT);
 
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 60));
-        g.drawString("ASTEROIDS", GameConfig.SCREEN_WIDTH / 2 - 150, 150);
-        g.setFont(new Font("Arial", Font.PLAIN, 24));
-        g.drawString("Press ENTER to Start", GameConfig.SCREEN_WIDTH / 2 - 120, 300);
-        g.drawString("Press ESC to Quit", GameConfig.SCREEN_WIDTH / 2 - 100, 350);
+
+        Font titleFont = new Font("SansSerif", Font.BOLD, 72);
+        Font subFont = new Font("SansSerif", Font.PLAIN, 22);
+        Font smallFont = new Font("SansSerif", Font.PLAIN, 16);
+
+        String title = "ASTEROIDS";
+        g.setFont(titleFont);
+        FontMetrics tm = g.getFontMetrics();
+        int titleX = (GameConfig.SCREEN_WIDTH - tm.stringWidth(title)) / 2;
+        int titleY = 160;
+        g.drawString(title, titleX, titleY);
+
+        g.setFont(subFont);
+        String hs = "High score: " + world.getHighScore();
+        FontMetrics sm = g.getFontMetrics();
+        g.drawString(hs, (GameConfig.SCREEN_WIDTH - sm.stringWidth(hs)) / 2, titleY + 50);
+
+        String start = "Press ENTER to start";
+        g.drawString(start, (GameConfig.SCREEN_WIDTH - sm.stringWidth(start)) / 2, 320);
+
+        String quit = "Press ESC to quit";
+        g.drawString(quit, (GameConfig.SCREEN_WIDTH - sm.stringWidth(quit)) / 2, 360);
+
+        g.setFont(smallFont);
+        FontMetrics xm = g.getFontMetrics();
+        String controls = "Controls: W accelerate, A/D rotate, SPACE shoot, ESC pause";
+        g.drawString(controls, (GameConfig.SCREEN_WIDTH - xm.stringWidth(controls)) / 2, 520);
     }
 
     @Override

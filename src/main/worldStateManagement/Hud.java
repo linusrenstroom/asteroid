@@ -2,9 +2,9 @@ package main.worldStateManagement;
 
 import main.gameobject.Player;
 import main.observer.LifeObserver;
-import main.observer.ScoreObserver;
 import main.observer.SoundObserver;
 import main.observer.UiObserver;
+import main.conf.GameConfig;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -12,19 +12,17 @@ import java.util.List;
 
 public class Hud {
     private final List<UiObserver> observers = new ArrayList<>();
+    private final World world;
 
     public Hud(Player player, World world) {
+        this.world = world;
         LifeObserver lifeObserver = new LifeObserver();
-        ScoreObserver scoreObserver = new ScoreObserver();
         SoundObserver soundObserver = new SoundObserver();
 
         player.addObserver(lifeObserver);
         world.addObserver(soundObserver);
-        world.addObserver(scoreObserver);
-        player.addObserver(scoreObserver);
 
         observers.add(lifeObserver);
-        observers.add(scoreObserver);
 
     }
 
@@ -32,5 +30,9 @@ public class Hud {
         for (UiObserver observer : observers) {
             observer.draw(g2);
         }
+
+        g2.setColor(Color.WHITE);
+        g2.drawString("Score: " + world.getScore(), 20, 30);
+        g2.drawString("HighScore: " + world.getHighScore(), GameConfig.SCREEN_WIDTH - 150, 30);
     }
 }

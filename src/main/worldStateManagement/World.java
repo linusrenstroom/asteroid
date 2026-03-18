@@ -1,6 +1,7 @@
 // World.java — remove setGameState entirely, it doesn't belong here
 package main.worldStateManagement;
 
+import main.HighScoreHandler;
 import main.Vector2D;
 import main.conf.GameConfig;
 import main.factory.BulletFactory;
@@ -26,6 +27,11 @@ public class World implements Observer, WorldMediator {
     private final BulletFactory bulletFactory;
     private final List<Observer> gameObservers = new ArrayList<>();
 
+    private final HighScoreHandler highScoreHandler = new HighScoreHandler();
+    private int score = 0;
+    private int lastRunScore = 0;
+    private int highScore = 0;
+
     public World(Player player, SpawnManager spawnManager, BulletFactory bulletFactory) {
         this.player = player;
         this.spawnManager = spawnManager;
@@ -33,6 +39,8 @@ public class World implements Observer, WorldMediator {
         addObject(player);
         player.addObserver(this);
         spawnManager.addObserver(this);
+
+        this.highScore = highScoreHandler.getHighScore();
     }
 
     public void update(double deltaTime) {
@@ -76,12 +84,27 @@ public class World implements Observer, WorldMediator {
 
     public void reset() {
         objects.clear();
+        spawnManager.reset();
         player.reset();
+        lastRunScore = score;
+        score = 0;
         addObject(player);
     }
 
     public Player getPlayer() {
         return player;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getHighScore() {
+        return highScore;
+    }
+
+    public int getLastRunScore() {
+        return lastRunScore;
     }
 
     @Override
@@ -93,6 +116,10 @@ public class World implements Observer, WorldMediator {
                 }
             }
             case PLAYER_DIED -> {
+                // Persist high score and keep last score for Game Over screen.
+                lastRunScore = score;
+                highScoreHandler.save(score);
+                highScore = Math.max(highScore, score);
             }
             case ENEMY_SHOT_FIRED -> {
                 if (subject instanceof EnemyShip e) {
@@ -101,6 +128,7 @@ public class World implements Observer, WorldMediator {
             }
             case ASTEROID_DESTROYED -> {
                 if (subject instanceof Asteroid a) {
+                    score++;
                     addObject(new Explosion(new Point(a.getPosition().getX(), a.getPosition().getY())));
                 }
             }
