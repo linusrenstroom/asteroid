@@ -3,8 +3,7 @@ package main.gameobject;
 import main.Vector2D;
 import main.gameobject.bullet.Bullet;
 import main.observer.Event;
-import main.strategy.movement.LinearMovement;
-import main.strategy.movement.decorator.WrappingMovementStrategy;
+import main.strategy.movement.EnemyPatrolMovement;
 import main.util.Point;
 import main.worldStateManagement.WorldMediator;
 import java.awt.*;
@@ -14,8 +13,11 @@ public class EnemyShip extends GameObject {
     private final Polygon shape;
     private double aliveTime = 0;
     private double lastShotTime = 0;
-    private static final double FIRE_RATE = 0.5;
+    private static final double FIRE_RATE = 3.0;
     private double angle = 0;
+
+    private double patrolPhaseTime = 0;
+    private boolean patrolVerticalLeg = false;
 
     private final Color primaryColor = new Color(20, 20, 25);
     private final Color accentColor = new Color(255, 0, 50);
@@ -28,7 +30,23 @@ public class EnemyShip extends GameObject {
         int[] yPoints = {-20, -5, 10, 5, 15, 5, 10, -5};
         this.shape = new Polygon(xPoints, yPoints, 8);
 
-        this.movementStrategy = new WrappingMovementStrategy(new LinearMovement(), 0);
+        this.movementStrategy = new EnemyPatrolMovement();
+    }
+
+    public double getPatrolPhaseTime() {
+        return patrolPhaseTime;
+    }
+
+    public void setPatrolPhaseTime(double patrolPhaseTime) {
+        this.patrolPhaseTime = patrolPhaseTime;
+    }
+
+    public boolean isPatrolVerticalLeg() {
+        return patrolVerticalLeg;
+    }
+
+    public void setPatrolVerticalLeg(boolean patrolVerticalLeg) {
+        this.patrolVerticalLeg = patrolVerticalLeg;
     }
 
     @Override

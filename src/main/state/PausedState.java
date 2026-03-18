@@ -23,7 +23,7 @@ public class PausedState implements GameState {
     public void update(double deltaTime, World world, Consumer<GameState> changeState) {}
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g, World world) {
         g.setColor(new Color(0, 0, 0, GameConfig.PAUSED_OVERLAY_ALPHA));
         g.fillRect(0, 0, GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT);
         g.setColor(Color.WHITE);

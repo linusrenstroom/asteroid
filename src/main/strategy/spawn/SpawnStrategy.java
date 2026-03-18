@@ -1,9 +1,7 @@
 package main.strategy.spawn;
 
-import main.factory.GameObjectFactory;
-import main.gameobject.GameObject;
-
-import java.util.List;
+import main.util.Point;
 
 public interface SpawnStrategy {
-    List<GameObject> spawn(GameObjectFactory factory, double gameTime);}
+    Point spawnPosition();
+}

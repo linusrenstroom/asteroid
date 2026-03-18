@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 public interface GameState {
     void update(double deltaTime, World world, Consumer<GameState> changeState);
-    void draw(Graphics2D g);
+    void draw(Graphics2D g, World world);
     Map<Integer, Command> getKeyBindings(World world, Consumer<GameState> changeState);
 
 }

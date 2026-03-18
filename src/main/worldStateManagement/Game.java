@@ -44,7 +44,7 @@ public class Game extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         world.draw(g2);
-        gameState.draw(g2);
+        gameState.draw(g2, world);
         hud.draw(g2);
     }
 

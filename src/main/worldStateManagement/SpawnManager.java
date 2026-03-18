@@ -62,24 +62,53 @@ public class SpawnManager {
         SpawnStrategy strategy = strategies[random.nextInt(strategies.length)];
         AsteroidFactory factory = asteroidFactories[random.nextInt(asteroidFactories.length)];
 
-        List<GameObject> spawned = strategy.spawn(factory, totalGameTime);
-        for (GameObject obj : spawned) {
-            observers.forEach(obj::addObserver);
-            world.addObject(obj);
-        }
+        Point spawnPos = strategy.spawnPosition();
+        Point targetPos = randomTargetPosition();
+        Vector2D velocity = velocityTowards(spawnPos, targetPos, asteroidSpeed(totalGameTime));
+
+        GameObject asteroid = factory.createGameObject(spawnPos, velocity);
+        observers.forEach(asteroid::addObserver);
+        world.addObject(asteroid);
     }
 
     private void spawnEnemyShip(World world) {
         SpawnStrategy strategy = strategies[random.nextInt(strategies.length)];
 
-        List<GameObject> spawned = strategy.spawn(shipFactory, totalGameTime);
-        for (GameObject ship : spawned) {
-            observers.forEach(ship::addObserver);
-            world.addObject(ship);
-        }
+        Point spawnPos = strategy.spawnPosition();
+        // EnemyShipFactory ignores the velocity; its movement strategy controls motion.
+        GameObject ship = shipFactory.createGameObject(spawnPos, new Vector2D(0, 0));
+        observers.forEach(ship::addObserver);
+        world.addObject(ship);
     }
 
     public void addObserver(Observer observer) {
         observers.add(observer);
+    }
+
+    public void reset() {
+        accumulatedTime = 0;
+        totalGameTime = 0;
+        enemySpawnTimer = 0;
+    }
+
+    private double asteroidSpeed(double gameTime) {
+        return GameConfig.SPAWN_ASTEROID_BASE_SPEED
+                + gameTime * GameConfig.SPAWN_ASTEROID_SPEED_INCREASE_PER_SECOND;
+    }
+
+    private Point randomTargetPosition() {
+        double targetX = GameConfig.SCREEN_WIDTH * GameConfig.SPAWN_TARGET_X_OFFSET_FACTOR
+                + (random.nextDouble() * GameConfig.SCREEN_WIDTH * GameConfig.SPAWN_TARGET_X_RANGE_FACTOR);
+        double targetY = GameConfig.SCREEN_HEIGHT * GameConfig.SPAWN_TARGET_Y_BASE_FACTOR
+                + (random.nextDouble() * GameConfig.SCREEN_HEIGHT * GameConfig.SPAWN_TARGET_Y_RANGE_FACTOR);
+        return new Point(targetX, targetY);
+    }
+
+    private Vector2D velocityTowards(Point from, Point to, double speed) {
+        double deltaX = to.getX() - from.getX();
+        double deltaY = to.getY() - from.getY();
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        if (distance == 0) return new Vector2D(speed, 0);
+        return new Vector2D((deltaX / distance) * speed, (deltaY / distance) * speed);
     }
 }
