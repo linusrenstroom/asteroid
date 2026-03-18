@@ -24,20 +24,12 @@ public class GameConfig {
     public static final int PLAYER_SHIP_POINT_COUNT = 8;
 
     public static final int BULLET_RADIUS = 3;
-
-    public static final int ASTEROID_DEFAULT_RADIUS = 20;
-    public static final double ASTEROID_DEFAULT_START_X = 0.0;
-    public static final double ASTEROID_DEFAULT_START_Y = 0.0;
-    public static final double ASTEROID_DEFAULT_VELOCITY_X = 5.0;
-    public static final double ASTEROID_DEFAULT_VELOCITY_Y = 0.0;
-    public static final double ASTEROID_DESPAWN_MARGIN = 100.0;
-
     public static final double SPAWN_OFFSCREEN_MARGIN = 50.0;
     public static final double SPAWN_TARGET_X_OFFSET_FACTOR = 0.5;
     public static final double SPAWN_TARGET_X_RANGE_FACTOR = 0.25;
     public static final double SPAWN_TARGET_Y_BASE_FACTOR = 0.25;
     public static final double SPAWN_TARGET_Y_RANGE_FACTOR = 0.5;
-    public static final double SPAWN_ASTEROID_BASE_SPEED = 50.0;
+    public static final double SPAWN_ASTEROID_BASE_SPEED = 30.0;
     public static final double SPAWN_ASTEROID_SPEED_INCREASE_PER_SECOND = 2.0;
     public static final double BASE_SPAWN_RATE_SECONDS = 2.0;
 

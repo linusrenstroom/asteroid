@@ -2,6 +2,7 @@ package main.gameobject;
 
 import main.Vector2D;
 import main.gameobject.bullet.Bullet;
+import main.gameobject.bullet.PlayerBullet;
 import main.observer.Event;
 import main.strategy.movement.LinearMovement;
 import main.strategy.movement.decorator.WrappingMovementStrategy;
@@ -14,7 +15,7 @@ public class EnemyShip extends GameObject {
     private final Polygon shape;
     private double aliveTime = 0;
     private double lastShotTime = 0;
-    private static final double FIRE_RATE = 2.0;
+    private static final double FIRE_RATE = 1.0;
     private double angle = 0;
 
     private final Color primaryColor = new Color(20, 20, 25);
@@ -84,7 +85,7 @@ public class EnemyShip extends GameObject {
 
     @Override
     public void onCollision(GameObject other) {
-        if (other instanceof Bullet) {
+        if (other instanceof PlayerBullet) {
             destroy();
         }
     }
