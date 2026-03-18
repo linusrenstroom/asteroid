@@ -1,6 +1,7 @@
 package main;
 
 import main.conf.GameConfig;
+import main.facade.AsteroidsGame;
 
 import javax.swing.*;
 
@@ -10,7 +11,8 @@ public class Main extends JFrame {
         super(GameConfig.WINDOW_TITLE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Backwards-compatible entry point; facade owns real setup.
-        new AsteroidsGame();
+        AsteroidsGame game = new AsteroidsGame();
+        game.start();
     }
 
     public static void main(String[] args) {

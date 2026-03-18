@@ -1,5 +1,6 @@
-package main;
+package main.facade;
 
+import main.SoundManager;
 import main.conf.GameConfig;
 import main.factory.BulletFactory;
 import main.gameobject.Player;
@@ -12,7 +13,7 @@ import javax.swing.JFrame;
 import java.awt.Dimension;
 
 
-public final class AsteroidsGame {
+public class AsteroidsGame implements GameFacade {
     private final JFrame frame;
     private final Game game;
     private final SoundManager soundManager;
@@ -57,5 +58,11 @@ public final class AsteroidsGame {
 
     public Game getGame() {
         return game;
+    }
+
+    @Override
+    public void start() {
+        this.game.start();
+
     }
 }

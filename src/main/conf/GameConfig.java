@@ -13,12 +13,12 @@ public class GameConfig {
     public static final double PLAYER_START_X_RATIO = 0.5;
     public static final double PLAYER_START_Y_RATIO = 0.5;
 
-    public static final double PLAYER_ROTATION_SPEED = 3.5;
+    public static final double PLAYER_ROTATION_SPEED = 1;
     public static final double PLAYER_ACCELERATION = 200.0;
     public static final double PLAYER_DRAG_PER_SECOND = 0.35;
     public static final double PLAYER_BULLET_SPEED = 300.0;
-    public static final double ENEMY_BULLET_SPEED = 200.0;
-    public static final double ENEMY_SHIP_PATROL_SPEED = 60.0;
+    public static final double ENEMY_BULLET_SPEED = 100.0;
+    public static final double ENEMY_SHIP_PATROL_SPEED = 50.0;
     public static final double PLAYER_HEADING_OFFSET_RADIANS = Math.PI / 2.0;
     public static final int[] PLAYER_SHIP_X_POINTS = { 0, -4, -12, -3,  0,  3, 12,  4};
     public static final int[] PLAYER_SHIP_Y_POINTS = {-18, -6,  12, 6,  10,  6, 12, -6};

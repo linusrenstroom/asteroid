@@ -2,6 +2,7 @@ package main.gameobject;
 
 import main.Vector2D;
 import main.gameobject.bullet.Bullet;
+import main.gameobject.bullet.PlayerBullet;
 import main.observer.Event;
 import main.strategy.movement.EnemyPatrolMovement;
 import main.util.Point;
@@ -13,7 +14,7 @@ public class EnemyShip extends GameObject {
     private final Polygon shape;
     private double aliveTime = 0;
     private double lastShotTime = 0;
-    private static final double FIRE_RATE = 0.5;
+    private static final double FIRE_RATE = 3;
     private double angle = 0;
 
     private double patrolPhaseTime = 0;

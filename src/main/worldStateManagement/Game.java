@@ -25,6 +25,8 @@ public class Game extends JPanel {
         addKeyListener(inputHandler);
         setFocusable(true);
         setBackground(Color.DARK_GRAY);
+    }
+    public void start(){
         gameLoop.start();
     }
 
