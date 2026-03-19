@@ -7,7 +7,7 @@ import main.observer.Observable;
 import javax.swing.*;
 import java.util.function.DoubleConsumer;
 
-public class GameLoop extends Observable {
+public class GameLoop {
     private final Timer timer;
     private long lastTime;
     private final DoubleConsumer onUpdate;

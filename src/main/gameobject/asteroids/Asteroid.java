@@ -76,17 +76,4 @@ public abstract class Asteroid extends GameObject {
             notifyObservers(Event.ASTEROID_DESTROYED);
         }
     }
-    public void drawDeadEffect(Graphics2D g) {
-        AffineTransform old = g.getTransform();
-        g.translate(position.getX(), position.getY());
-        g.rotate(rotationAngle);
-
-        g.setColor(Color.BLACK);
-        g.fill(shape);
-        g.setColor(Color.WHITE);
-        g.setStroke(new BasicStroke(2));
-        g.draw(shape);
-
-        g.setTransform(old);
-    }
 }

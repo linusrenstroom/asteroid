@@ -18,7 +18,7 @@ public class Hud {
         this.world = world;
         LifeObserver lifeObserver = new LifeObserver();
         SoundObserver soundObserver = new SoundObserver();
-
+        world.addObserver(lifeObserver);
         player.addObserver(lifeObserver);
         world.addObserver(soundObserver);
 

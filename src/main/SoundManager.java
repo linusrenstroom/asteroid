@@ -10,7 +10,7 @@ public class SoundManager {
     private Map<String, Clip> sounds = new HashMap<>();
     private SourceDataLine musicLine;
     private volatile boolean musicRunning = false;
-    private float musicVolume = 0.0f; // Default "natural" volume
+    private float musicVolume = 0.0f;
 
     public void loadSound(String name, String path) {
         try {
@@ -85,8 +85,6 @@ public class SoundManager {
                     synchronized (this) {
                         musicLine = (SourceDataLine) AudioSystem.getLine(info);
                         musicLine.open(targetFormat);
-
-                        // Apply volume before starting
                         if (musicLine.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
                             FloatControl gainControl = (FloatControl) musicLine.getControl(FloatControl.Type.MASTER_GAIN);
                             gainControl.setValue(musicVolume);
